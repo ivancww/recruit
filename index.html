@@ -46,6 +46,17 @@
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.95rem; color: var(--secondary); }
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.05rem; box-sizing: border-box; color: var(--primary); font-weight: bold; outline: none; background: #fff; }
         
+        /* 立即計算大按鈕樣式 */
+        .calc-btn {
+            background: linear-gradient(135deg, var(--primary), #e74c3c);
+            color: white; border: none; padding: 16px; width: 100%;
+            border-radius: 10px; font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; margin-top: 15px;
+            box-shadow: 0 6px 15px rgba(211,17,69,0.35);
+            transition: 0.2s;
+        }
+        .calc-btn:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(211,17,69,0.2); }
+
         .switch-container { display: flex; align-items: center; justify-content: space-between; background: #fdf5e6; padding: 12px; border-radius: 8px; border: 1px solid #f39c12; margin-top: 15px; }
         .switch-label { font-weight: bold; color: #d35400; font-size: 0.95rem; }
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
@@ -139,8 +150,7 @@
             <div class="switch-container" id="special-bonus-box" style="display:none;">
                 <div class="switch-label">🚀 模擬完美達標 (領取期滿大花紅)</div>
                 <label class="switch">
-                    <input type="checkbox" id="achieve-bonus" onchange="runCalculation()">
-                    <span class="slider"></span>
+                    <input type="checkbox" id="achieve-bonus">
                 </label>
             </div>
         </div>
@@ -165,6 +175,8 @@
             <div class="input-group"><label>🛡️ 危疾 (18年期)</label><input type="tel" id="in-ci18" placeholder="0" oninput="handleInput(this, 'ci18')"></div>
             <div class="input-group"><label>💎 危疾 (25年期)</label><input type="tel" id="in-ci25" placeholder="0" oninput="handleInput(this, 'ci25')"></div>
             <div class="input-group"><label>💰 儲蓄保險</label><input type="tel" id="in-sav" placeholder="0" oninput="handleInput(this, 'sav')"></div>
+            
+            <button type="button" class="calc-btn" onclick="runCalculation()">🧮 立即計算 / 更新結果</button>
         </div>
 
         <div class="card">
@@ -262,11 +274,12 @@
         </div>
     </div>
 
-    <div class="version-tag" id="app-version-display">版本號: v1.0.0</div>
+    <div class="version-tag" id="app-version-display">版本號: v1.0.2</div>
 </div>
 
 <script>
-    const APP_VERSION = "v1.0.0"; // 每次發佈新版本時更改這裡
+    // 每次更新代碼，請務必更新這個變數，並同步更新 sw.js 裡面的 CACHE_NAME
+    const APP_VERSION = "v1.0.2"; 
     document.getElementById('app-version-display').innerText = "版本號: " + APP_VERSION;
 
     function switchTab(tabId) {
@@ -330,7 +343,6 @@
             reqHtml = '📌 首年總要求 (FYCC)： $' + (mb * 12).toLocaleString('en-US') + ' <br>📌 次年總要求 (FYCC)： $' + (mb * 14).toLocaleString('en-US');
         }
         document.getElementById('req-box').innerHTML = reqHtml;
-        runCalculation();
     }
 
     var planDataInputs = [
@@ -358,8 +370,7 @@
         } else { 
             elem.value = ''; 
         }
-        
-        runCalculation(); 
+        // 注意：這裡已經拿掉了 runCalculation()，只有按按鈕才會算
     }
 
     function selectYear(y) {
@@ -382,6 +393,7 @@
         document.getElementById('in-ci25').value = d.ci25 ? d.ci25.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
         document.getElementById('in-sav').value = d.sav ? d.sav.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
 
+        // 切換年份時執行一次計算以顯示該年資料
         runCalculation();
     }
 
@@ -406,7 +418,6 @@
             }
         }
 
-        // 核心運算
         for (var i = 0; i < 7; i++) {
             var y = i + 1; 
             var d = planDataInputs[i];
@@ -427,7 +438,6 @@
             var r2Rate = isElite ? 0.90 : 0.70;
             var r36Rate = isElite ? 0.45 : 0.35;
 
-            // 被動收入延續
             for (var calY = y + 1; calY <= 7; calY++) {
                 var age = calY - y + 1; 
                 yearlyRC[calY] += rcBase;
@@ -468,7 +478,6 @@
         var currentYearTotal = yearlyFYC[currentYear] + yearlyMB[currentYear] + yearlyYEB[currentYear] + yearlyRC[currentYear] + yearlyBonus[currentYear] + curSpecial;
         document.getElementById('grand-total').innerText = format(currentYearTotal);
 
-        // 累積計算
         var cumulativeTotal = 0;
         for (var k = 1; k <= currentYear; k++) {
             cumulativeTotal += yearlyFYC[k] + yearlyMB[k] + yearlyYEB[k] + yearlyRC[k] + yearlyBonus[k] + yearlySpecial[k];
@@ -476,16 +485,14 @@
         document.getElementById('cumulative-total').innerText = format(cumulativeTotal);
     }
 
-    // ================= 強制更新 PWA Service Worker 邏輯 =================
+    // ================= PWA 強制更新邏輯 =================
     let newWorker;
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('sw.js').then(reg => {
-                // 偵測是否有新的 SW 正在安裝
                 reg.addEventListener('updatefound', () => {
                     newWorker = reg.installing;
                     newWorker.addEventListener('statechange', () => {
-                        // 如果有新版安裝完成，而且舊版依然在控制頁面，代表需要強制更新
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                             document.getElementById('update-overlay').style.display = 'flex';
                         }
@@ -493,7 +500,6 @@
                 });
             }).catch(function(err) {});
             
-            // 當新的 SW 接管後，自動重新整理頁面以載入新代碼
             let refreshing;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
@@ -503,14 +509,11 @@
         });
     }
 
-    // 使用者點擊強制更新按鈕
     function forceUpdateApp() {
         document.getElementById('force-update-btn').innerText = "更新中...";
         if (newWorker) {
-            // 傳送指令給 SW 叫它立刻接管 (skipWaiting)
             newWorker.postMessage({ action: 'skipWaiting' });
         } else {
-            // 備用方案：清空所有快取並重新整理
             caches.keys().then(names => {
                 for (let name of names) caches.delete(name);
             }).then(() => {
@@ -521,6 +524,7 @@
 
     window.onload = function() {
         setPackage('PA18'); 
+        runCalculation();
     };
 </script>
 
