@@ -1,4 +1,5 @@
-const CACHE_NAME = 'aia-pwa-cache-v1';
+// 每次修改 index.html 後，請一定要來這裡更改版本號！(例如改成 v1.0.1)
+const CACHE_NAME = 'aia-pwa-cache-v1.0.0'; 
 const urlsToCache = [
   './',
   './index.html',
@@ -7,33 +8,27 @@ const urlsToCache = [
   './icon-512.png'
 ];
 
-// 安裝 Service Worker 並快取檔案
+// 安裝並快取
 self.addEventListener('install', event => {
+  // 強制讓新的 Service Worker 進入 waiting 狀態
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
   );
 });
 
-// 攔截網路請求，優先從快取讀取（離線可用）
+// 攔截請求，優先使用快取
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // 如果在快取中找到匹配的檔案，就直接回傳快取的檔案
-        if (response) {
-          return response;
-        }
-        // 否則透過網路去抓取
-        return fetch(event.request);
-      })
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
   );
 });
 
-// 更新 Service Worker 時清除舊的快取
+// 啟動新版本時，清除舊版快取
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -47,4 +42,13 @@ self.addEventListener('activate', event => {
       );
     })
   );
+  // 確保新版本立刻接管所有頁面
+  return self.clients.claim();
+});
+
+// 接收來自網頁的「強制更新」指令
+self.addEventListener('message', function(event) {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
