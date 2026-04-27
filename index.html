@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d31145">
+    <title>AIA 財富領袖系統</title>
+    <style>
+        :root {
+            --primary: #d31145;
+            --secondary: #2c3e50;
+            --passive-gold: #f39c12;
+            --bonus-red: #e74c3c;
+            --bg: #f4f6f9;
+        }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; color: #333; }
+        header { background: var(--primary); color: white; text-align: center; padding: 15px; font-weight: bold; font-size: 1.2rem; }
+        
+        /* 頂部三導航列 */
+        .app-nav { display: flex; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .nav-btn { flex: 1; padding: 12px 2px; text-align: center; font-weight: bold; color: #888; font-size: 0.9rem; border-bottom: 3px solid transparent; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .nav-btn.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+
+        .container { padding: 15px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        h3 { color: var(--primary); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.1rem; }
+        
+        /* 年份選擇按鈕 */
+        .year-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .yr-tab { flex: 1 1 calc(25% - 8px); padding: 12px 5px; border: 1px solid var(--primary); background: white; color: var(--primary); border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; text-align: center; outline: none; }
+        .yr-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 6px rgba(211, 17, 69, 0.4); }
+        
+        /* 招募計劃選擇按鈕 */
+        .pkg-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
+        .pkg-tab { flex: 1; padding: 12px 5px; border: 1px solid var(--primary); background: white; color: var(--primary); border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; text-align: center; }
+        .pkg-tab.active { background: var(--primary); color: white; }
+
+        .current-input-label { background: #fff5f7; color: var(--primary); padding: 10px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; border: 1px dashed #ffcdd2; font-size: 0.9rem; line-height: 1.5; }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.95rem; color: var(--secondary); }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.05rem; box-sizing: border-box; color: var(--primary); font-weight: bold; outline: none; background: #fff; }
+        
+        /* 巨額花紅開關設計 */
+        .switch-container { display: flex; align-items: center; justify-content: space-between; background: #fdf5e6; padding: 12px; border-radius: 8px; border: 1px solid #f39c12; margin-top: 15px; }
+        .switch-label { font-weight: bold; color: #d35400; font-size: 0.95rem; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #f39c12; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* 結果顯示列 */
+        .res-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 1rem; align-items: center; }
+        .res-row.highlight { color: var(--primary); font-weight: bold; font-size: 1.15rem; }
+        .res-row.passive { color: var(--passive-gold); font-weight: bold; }
+        .res-row.special-bonus { color: var(--bonus-red); font-weight: bold; font-size: 1.1rem; background: #ffebee; padding: 8px; border-radius: 6px; }
+        .badge { background: var(--passive-gold); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 5px; }
+        
+        /* 底層結算區 */
+        .actual-total { background: #2c3e50; color: white; border: none; }
+        .actual-total h3 { color: #ecf0f1; border-bottom: 1px solid #4a6278; }
+        .actual-total .res-row.highlight { color: #f1c40f; font-size: 1.3rem; border-top: 1px dashed #4a6278; padding-top: 15px; }
+        .actual-total .res-row { border-bottom: 1px solid #3d566e; padding-bottom: 8px; }
+        .actual-total .res-row:last-child { border-bottom: none; }
+
+        /* 條款與資訊樣式 */
+        .info-block { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
+        .info-title { font-weight: bold; color: var(--secondary); font-size: 1.05rem; margin-bottom: 8px; background: #f8f9fa; padding: 8px; border-left: 4px solid var(--primary); border-radius: 4px; }
+        .info-desc { font-size: 0.9rem; color: #444; line-height: 1.6; margin: 0 0 5px 0; }
+        .info-highlight { color: var(--primary); font-weight: bold; }
+        .check-list { list-style: none; padding-left: 0; margin-top: 5px; }
+        .check-list li { position: relative; padding-left: 25px; margin-bottom: 8px; font-size: 0.9rem; color: #333; line-height: 1.4; }
+        .check-list li::before { content: "✅"; position: absolute; left: 0; top: 0; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<header>AIA 財富領袖系統</header>
+
+<div class="app-nav">
+    <div class="nav-btn active" id="nav-calc" onclick="switchTab('calc')"><span>💰</span>收入計算</div>
+    <div class="nav-btn" id="nav-info" onclick="switchTab('info')"><span>🤝</span>入職福利</div>
+    <div class="nav-btn" id="nav-cond" onclick="switchTab('cond')"><span>📝</span>達標條件</div>
+</div>
+
+<div class="container">
+    
+    <div id="view-calc" class="view-section active">
+        
+        <div class="card">
+            <h3>🎯 1. 選擇招募計劃與每月津貼</h3>
+            <div class="pkg-tabs">
+                <button type="button" class="pkg-tab active" id="pkg-FP12" onclick="setPackage('FP12')">FP12</button>
+                <button type="button" class="pkg-tab" id="pkg-PA18" onclick="setPackage('PA18')">PA18</button>
+                <button type="button" class="pkg-tab" id="pkg-TTFS" onclick="setPackage('TTFS')">TTFS</button>
+            </div>
+            <div class="input-group">
+                <label>💵 選擇目標每月花紅 (MB)</label>
+                <select id="mb-select" onchange="updateRequirements()"></select>
+            </div>
+            <div id="req-box" class="current-input-label"></div>
+
+            <div class="switch-container" id="special-bonus-box" style="display:none;">
+                <div class="switch-label">🚀 模擬完美達標 (領取期滿大花紅)</div>
+                <label class="switch">
+                    <input type="checkbox" id="achieve-bonus" onchange="runCalculation()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📊 2. 每年業務預測輸入</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">點擊年份切換，模擬未來 7 年業績：</p>
+            
+            <div class="year-tabs" id="year-tabs">
+                <button type="button" class="yr-tab active" id="tab-1" onclick="selectYear(1)">第 1 年</button>
+                <button type="button" class="yr-tab" id="tab-2" onclick="selectYear(2)">第 2 年</button>
+                <button type="button" class="yr-tab" id="tab-3" onclick="selectYear(3)">第 3 年</button>
+                <button type="button" class="yr-tab" id="tab-4" onclick="selectYear(4)">第 4 年</button>
+                <button type="button" class="yr-tab" id="tab-5" onclick="selectYear(5)">第 5 年</button>
+                <button type="button" class="yr-tab" id="tab-6" onclick="selectYear(6)">第 6 年</button>
+                <button type="button" class="yr-tab" id="tab-7" onclick="selectYear(7)">第 7 年</button>
+            </div>
+            
+            <div class="current-input-label" style="text-align: center;">✏️ 當前正在輸入：第 <span id="input-title-yr">1</span> 年業績</div>
+
+            <div class="input-group"><label>🏥 醫療保險</label><input type="tel" id="in-med" placeholder="0" oninput="handleInput(this, 'med')"></div>
+            <div class="input-group"><label>🛡️ 危疾 (18年期)</label><input type="tel" id="in-ci18" placeholder="0" oninput="handleInput(this, 'ci18')"></div>
+            <div class="input-group"><label>💎 危疾 (25年期)</label><input type="tel" id="in-ci25" placeholder="0" oninput="handleInput(this, 'ci25')"></div>
+            <div class="input-group"><label>💰 儲蓄保險</label><input type="tel" id="in-sav" placeholder="0" oninput="handleInput(this, 'sav')"></div>
+        </div>
+
+        <div class="card">
+            <h3>💼 第 <span id="fyc-title-yr">1</span> 年主動收入</h3>
+            <div class="res-row"><span>該年首年佣金 (FYC)：</span><span id="out-fyc">$0</span></div>
+            <div class="res-row" style="color: #16a085;"><span>該年每月津貼 (MB) 總和：</span><span id="out-mb">$0</span></div>
+            <div id="out-special-box" class="res-row special-bonus" style="display:none;">
+                <span id="special-bonus-name">期滿特別花紅：</span><span id="out-special-amount">$0</span>
+            </div>
+        </div>
+
+        <div class="card" style="border: 2px solid var(--passive-gold);">
+            <h3>🌟 續保佣金 + 花紅 <span class="badge">被動收入</span></h3>
+            <div style="background: #fffbf0; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                <div class="res-row"><span>該年續保佣金：</span><span id="sel-rc">$0</span></div>
+                <div class="res-row passive"><span>該年續保花紅：</span><span id="sel-bonus">$0</span></div>
+                <div class="res-row highlight" style="color: var(--passive-gold); border-top: 1px solid #f39c12; padding-top: 10px;">
+                    <span>該年被動收入總計：</span><span id="sel-total">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card actual-total">
+            <h3>🏁 第 <span id="sum-title-yr">1</span> 年實際收入結算</h3>
+            <div class="res-row"><span>主動收入 (含佣金+津貼)：</span><span id="sum-active">$0</span></div>
+            <div class="res-row"><span>年終獎金 (YEB)：</span><span id="sum-yeb">$0</span></div>
+            <div class="res-row"><span>被動收入 (續保+花紅)：</span><span id="sum-passive">$0</span></div>
+            <div class="res-row" id="sum-special-box" style="display:none; color:#ffb74d; font-weight:bold;">
+                <span>🎯 期滿額外大花紅：</span><span id="sum-special-amount">$0</span>
+            </div>
+            <div class="res-row highlight"><span>該年總實際收入：</span><span id="grand-total">$0</span></div>
+        </div>
+    </div>
+
+    <div id="view-info" class="view-section">
+        <div class="card">
+            <h3>🤝 招募計劃入職資格</h3>
+            <div class="info-block">
+                <div class="info-title">🥇 FP12 (穩健起步)</div>
+                <p class="info-desc">• 高級文憑 / 副學士 / 學位畢業生 / AIAPA (豁免入息證明)<br>• 持學生簽證的全日制非本地研究生<br>• 其他人士：過去12個月總收入達 HK$108,000</p>
+            </div>
+            <div class="info-block">
+                <div class="info-title">🚀 PA18 (領袖槓桿)</div>
+                <p class="info-desc">• 學士至博士畢業生 / AIAPA (豁免入息證明)<br>• 過去12個月收入達 HK$120,000</p>
+            </div>
+            <div class="info-block" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+                <div class="info-title">👑 TTFS (極致回報)</div>
+                <p class="info-desc">• 專為持有 **高才通 (TTPS) / 優才 (QMAS)** 簽證人士<br>• TTFS25 / 30 級別可豁免入息證明</p>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🎁 晉升階梯與核心福利</h3>
+            <div class="info-block" style="border-bottom:none; padding-bottom:0;">
+                <p class="info-desc">• <span class="info-highlight">助理分區經理 (AUM)：</span> 招募 1 名新晉顧問，業績達 HK$275,000 FYC Score。</p>
+                <p class="info-desc">• <span class="info-highlight">年終花紅：</span> 業績達標可獲 16.7% - 23.5% 獎賞。</p>
+                <p class="info-desc">• <span class="info-highlight">被動收入躍升：</span> 達第二級別要求，第2年續保花紅躍升至 90%，第3-6年為 45%。</p>
+                <p class="info-desc">• <span class="info-highlight">團隊 Overriding：</span> 晉升後可獲 10% - 18% 額外管理花紅。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-cond" class="view-section">
+        <div class="card">
+            <h3>📝 巨額花紅發放條件 (透明度展示)</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">要獲取期滿大花紅，不僅需要業績達標，還需要確保良好的業務質素與專業資格。</p>
+            
+            <div class="info-block" style="background:#fff9e6; padding:15px; border-radius:8px; border-left:4px solid #f39c12;">
+                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#e74c3c; font-size:1.1rem;">🔥 PA18 特別業績花紅 (最高 7.2 倍)</span></div>
+                <p class="info-desc" style="margin-top:5px;">要獲得相等於 **MB 6.0倍 或 7.2倍** 的一次性巨額獎金，必須在首 24 個月內同時滿足以下 <span style="font-weight:bold; color:#d35400;">4 大條件</span>：</p>
+                <ul class="check-list">
+                    <li><span class="info-highlight">佣金要求：</span> 達到指定之首年佣金總額 (FYCC) 目標。</li>
+                    <li><span class="info-highlight">活動量要求：</span> 成功促成最少 **24 張** 獲批核之人壽保單。</li>
+                    <li><span class="info-highlight">業務質素：</span> 於第 24 個合約月，個人續保率必須達 **75%** 或以上。</li>
+                    <li><span class="info-highlight">專業資格：</span> 必須成功註冊最少 **3 個** 認可保險中介人牌照。</li>
+                </ul>
+            </div>
+
+            <div class="info-block" style="background:#f4f9f4; padding:15px; border-radius:8px; border-left:4px solid #27ae60;">
+                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#27ae60; font-size:1.1rem;">🔥 TTFS 業績挑戰花紅 (最高 225%)</span></div>
+                <p class="info-desc" style="margin-top:5px;">於第 36 個月結算，要獲得高達年度收入基準 **225%** 的終極獎金，需滿足：</p>
+                <ul class="check-list">
+                    <li><span class="info-highlight" style="color:#27ae60;">長線業績：</span> 第 1 至第 36 個合約月份內達到 FYCC 要求。</li>
+                    <li><span class="info-highlight" style="color:#27ae60;">合約維持：</span> 第 25 至 36 個月期間維持合約最低要求。</li>
+                    <li><span class="info-highlight" style="color:#27ae60;">高標準質素：</span> 於第 36 個合約月，個人續保率達 **85%**。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ================= 1. 導航切換功能 =================
+    function switchTab(tabId) {
+        document.getElementById('nav-calc').className = 'nav-btn';
+        document.getElementById('nav-info').className = 'nav-btn';
+        document.getElementById('nav-cond').className = 'nav-btn';
+        document.getElementById('nav-' + tabId).className = 'nav-btn active';
+
+        document.getElementById('view-calc').className = 'view-section';
+        document.getElementById('view-info').className = 'view-section';
+        document.getElementById('view-cond').className = 'view-section';
+        document.getElementById('view-' + tabId).className = 'view-section active';
+    }
+
+    // ================= 2. 招募計劃與 MB 設定 =================
+    var currentPackage = 'FP12';
+    var mbData = {
+        'FP12': [ { val: 10000, label: '$10,000' }, { val: 15000, label: '$15,000' }, { val: 20000, label: '$20,000' }, { val: 30000, label: '$30,000' } ],
+        'PA18': [ { val: 10000, label: '$10,000' }, { val: 15000, label: '$15,000' }, { val: 20000, label: '$20,000' }, { val: 30000, label: '$30,000' }, { val: 40000, label: '$40,000' }, { val: 50000, label: '$50,000' } ],
+        'TTFS': [ { val: 25000, label: '$25,000' }, { val: 40000, label: '$40,000' }, { val: 60000, label: '$60,000' }, { val: 80000, label: '$80,000' } ]
+    };
+
+    function setPackage(pkg) {
+        currentPackage = pkg;
+        document.getElementById('pkg-FP12').className = 'pkg-tab';
+        document.getElementById('pkg-PA18').className = 'pkg-tab';
+        document.getElementById('pkg-TTFS').className = 'pkg-tab';
+        document.getElementById('pkg-' + pkg).className = 'pkg-tab active';
+
+        var selectEl = document.getElementById('mb-select');
+        selectEl.innerHTML = '';
+        var options = mbData[pkg];
+        for (var i = 0; i < options.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = options[i].val;
+            opt.innerHTML = options[i].label;
+            selectEl.appendChild(opt);
+        }
+
+        var sbBox = document.getElementById('special-bonus-box');
+        var sbCheck = document.getElementById('achieve-bonus');
+        if(pkg === 'PA18' || pkg === 'TTFS') {
+            sbBox.style.display = 'flex';
+            sbCheck.checked = false;
+        } else {
+            sbBox.style.display = 'none';
+            sbCheck.checked = false;
+        }
+
+        updateRequirements();
+    }
+
+    function updateRequirements() {
+        var mbAmountStr = document.getElementById('mb-select').value;
+        var mb = parseInt(mbAmountStr, 10) || 0;
+        var reqHtml = '';
+        if(currentPackage === 'FP12') {
+            reqHtml = '📌 每月要求 (FYC)： $' + (mb * 1.25).toLocaleString('en-US');
+        } else if(currentPackage === 'PA18') {
+            reqHtml = '📌 每月要求 (FYCC)： $' + (mb * 1.5).toLocaleString('en-US') + ' <br>💡 (可計算下線佣金達標！)';
+        } else if(currentPackage === 'TTFS') {
+            reqHtml = '📌 首年總要求 (FYCC)： $' + (mb * 12).toLocaleString('en-US') + ' <br>📌 次年總要求 (FYCC)： $' + (mb * 14).toLocaleString('en-US');
+        }
+        document.getElementById('req-box').innerHTML = reqHtml;
+        runCalculation();
+    }
+
+    // ================= 3. 核心數據儲存與格式化 =================
+    var planDataInputs = [
+        { med: 0, ci18: 0, ci25: 0, sav: 0 }, { med: 0, ci18: 0, ci25: 0, sav: 0 },
+        { med: 0, ci18: 0, ci25: 0, sav: 0 }, { med: 0, ci18: 0, ci25: 0, sav: 0 },
+        { med: 0, ci18: 0, ci25: 0, sav: 0 }, { med: 0, ci18: 0, ci25: 0, sav: 0 },
+        { med: 0, ci18: 0, ci25: 0, sav: 0 }
+    ];
+    var currentYear = 1;
+
+    function format(num) {
+        var n = Math.round(Number(num) || 0);
+        return "$" + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // ================= 4. 輸入即時處理 (千分位+儲存) =================
+    function handleInput(elem, type) {
+        var valStr = elem.value.replace(/\D/g, ''); 
+        var val = parseInt(valStr, 10);
+        if (isNaN(val)) val = 0;
+        
+        planDataInputs[currentYear - 1][type] = val;
+        
+        if (val > 0) { 
+            elem.value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        } else { 
+            elem.value = ''; 
+        }
+        
+        runCalculation(); 
+    }
+
+    // ================= 5. 年份切換功能 =================
+    function selectYear(y) {
+        currentYear = y;
+        
+        // 更新按鈕樣式
+        for (var i = 1; i <= 7; i++) {
+            document.getElementById('tab-' + i).className = 'yr-tab';
+        }
+        document.getElementById('tab-' + y).className = 'yr-tab active';
+        
+        // 更新文字標題
+        document.getElementById('input-title-yr').innerText = y;
+        document.getElementById('fyc-title-yr').innerText = y;
+        document.getElementById('passive-title-yr').innerText = y;
+        document.getElementById('sum-title-yr').innerText = y;
+
+        // 讀取該年儲存的數據並載入輸入框
+        var d = planDataInputs[y - 1];
+        document.getElementById('in-med').value = d.med ? d.med.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
+        document.getElementById('in-ci18').value = d.ci18 ? d.ci18.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
+        document.getElementById('in-ci25').value = d.ci25 ? d.ci25.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
+        document.getElementById('in-sav').value = d.sav ? d.sav.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
+
+        // 切換年份後，立刻重新計算畫面
+        runCalculation();
+    }
+
+    // ================= 6. 核心計算系統 =================
+    function runCalculation() {
+        var mbAmountStr = document.getElementById('mb-select').value;
+        var mbAmount = parseInt(mbAmountStr, 10) || 0;
+        
+        var achieveBonusBox = document.getElementById('achieve-bonus');
+        var achieveBonus = achieveBonusBox ? achieveBonusBox.checked : false;
+        
+        var yearlyFYC = [0,0,0,0,0,0,0,0];
+        var yearlyMB =  [0,0,0,0,0,0,0,0]; 
+        var yearlyYEB = [0,0,0,0,0,0,0,0];
+        var yearlyRC =  [0,0,0,0,0,0,0,0];
+        var yearlyBonus=[0,0,0,0,0,0,0,0];
+        var yearlySpecial = [0,0,0,0,0,0,0,0];
+
+        // 巨額花紅注入邏輯
+        if (achieveBonus) {
+            if (currentPackage === 'PA18') {
+                yearlySpecial[2] = mbAmount * 7.2; // PA18 於第2年發放
+            } else if (currentPackage === 'TTFS') {
+                yearlySpecial[3] = mbAmount * 12 * 2.25; // TTFS 於第3年發放
+            }
+        }
+
+        // 遍歷 7 年計算產生之收益
+        for (var i = 0; i < 7; i++) {
+            var y = i + 1; 
+            var d = planDataInputs[i];
+
+            var fyc = (d.med * 0.25) + (d.ci18 * 0.50) + (d.ci25 * 0.54) + (d.sav * 0.25);
+            var yebRate = (fyc >= 391000) ? 0.235 : ((fyc >= 275000) ? 0.194 : 0.167);
+            var yeb = fyc > 0 ? (fyc * yebRate) : 0;
+            
+            yearlyFYC[y] += fyc;
+            yearlyYEB[y] += yeb;
+
+            if (currentPackage === 'FP12' && y === 1) { yearlyMB[y] += mbAmount * 12; }
+            if (currentPackage === 'PA18' && y <= 2) { yearlyMB[y] += mbAmount * 12; }
+            if (currentPackage === 'TTFS' && y <= 3) { yearlyMB[y] += mbAmount * 12; }
+
+            var rcBase = (d.med * 0.20) + (d.ci18 * 0.10) + (d.ci25 * 0.15) + (d.sav * 0.05);
+            var isElite = fyc >= 275000;
+            var r2Rate = isElite ? 0.90 : 0.70;
+            var r36Rate = isElite ? 0.45 : 0.35;
+
+            // 續保佣金及花紅疊加至未來年份
+            for (var calY = y + 1; calY <= 7; calY++) {
+                var age = calY - y + 1; 
+                yearlyRC[calY] += rcBase;
+                if (age === 2) {
+                    yearlyBonus[calY] += rcBase * r2Rate;
+                } else if (age >= 3 && age <= 6) {
+                    yearlyBonus[calY] += rcBase * r36Rate;
+                }
+            }
+        }
+
+        // --- 將計算結果渲染至畫面 (專注於 currentYear) ---
+        document.getElementById('out-fyc').innerText = format(yearlyFYC[currentYear]);
+        document.getElementById('out-mb').innerText = format(yearlyMB[currentYear]);
+        
+        var curSpecial = yearlySpecial[currentYear];
+        var outSpecialBox = document.getElementById('out-special-box');
+        var sumSpecialBox = document.getElementById('sum-special-box');
+        
+        // 判斷是否需要顯示大花紅
+        if(curSpecial > 0) {
+            outSpecialBox.style.display = 'flex';
+            sumSpecialBox.style.display = 'flex';
+            document.getElementById('special-bonus-name').innerText = (currentPackage === 'PA18') ? '🔥 PA18 7.2倍特別花紅：' : '🔥 TTFS 225%挑戰花紅：';
+            document.getElementById('out-special-amount').innerText = format(curSpecial);
+            document.getElementById('sum-special-amount').innerText = format(curSpecial);
+        } else {
+            outSpecialBox.style.display = 'none';
+            sumSpecialBox.style.display = 'none';
+        }
+
+        document.getElementById('sel-rc').innerText = format(yearlyRC[currentYear]);
+        document.getElementById('sel-bonus').innerText = format(yearlyBonus[currentYear]);
+        document.getElementById('sel-total').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
+
+        document.getElementById('sum-active').innerText = format(yearlyFYC[currentYear] + yearlyMB[currentYear]);
+        document.getElementById('sum-yeb').innerText = format(yearlyYEB[currentYear]);
+        document.getElementById('sum-passive').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
+        
+        // 最終實際總收入
+        var currentYearTotal = yearlyFYC[currentYear] + yearlyMB[currentYear] + yearlyYEB[currentYear] + yearlyRC[currentYear] + yearlyBonus[currentYear] + curSpecial;
+        document.getElementById('grand-total').innerText = format(currentYearTotal);
+    }
+
+    // 註冊 PWA Service Worker (若有的話)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('sw.js').catch(function(err) {
+                console.log('SW Registration failed: ', err);
+            });
+        });
+    }
+
+    // 初始化啟動
+    window.onload = function() {
+        setPackage('PA18'); // 預設打開 PA18 計劃
+    };
+</script>
+
+</body>
+</html>

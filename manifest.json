@@ -1,0 +1,21 @@
+{
+  "name": "AIA 財富領袖系統",
+  "short_name": "財富領袖",
+  "description": "AIA 招募展示與收入計算機",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#d31145",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
