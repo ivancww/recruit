@@ -1,5 +1,5 @@
-// 每次修改 index.html 後，請一定要來這裡更改版本號！(例如改成 v1.0.1)
-const CACHE_NAME = 'aia-pwa-cache-v1.0.0'; 
+// 每次修改 index.html 後，請一定要來這裡更改版本號！
+const CACHE_NAME = 'aia-pwa-cache-v1.0.2'; 
 const urlsToCache = [
   './',
   './index.html',
@@ -10,7 +10,6 @@ const urlsToCache = [
 
 // 安裝並快取
 self.addEventListener('install', event => {
-  // 強制讓新的 Service Worker 進入 waiting 狀態
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -42,7 +41,6 @@ self.addEventListener('activate', event => {
       );
     })
   );
-  // 確保新版本立刻接管所有頁面
   return self.clients.claim();
 });
 
