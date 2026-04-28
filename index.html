@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#d31145">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <title>AIA 財富領袖系統</title>
+    <title>AIA 精英領袖</title>
     
     <style>
         :root {
@@ -46,14 +46,8 @@
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.95rem; color: var(--secondary); }
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.05rem; box-sizing: border-box; color: var(--primary); font-weight: bold; outline: none; background: #fff; }
         
-        /* 立即計算大按鈕 */
         .calc-btn {
-            background: linear-gradient(135deg, var(--primary), #e74c3c);
-            color: white; border: none; padding: 16px; width: 100%;
-            border-radius: 10px; font-size: 1.2rem; font-weight: bold;
-            cursor: pointer; margin-top: 15px;
-            box-shadow: 0 6px 15px rgba(211,17,69,0.35);
-            transition: 0.2s;
+            background: linear-gradient(135deg, var(--primary), #e74c3c); color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 6px 15px rgba(211,17,69,0.35); transition: 0.2s;
         }
         .calc-btn:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(211,17,69,0.2); }
 
@@ -92,15 +86,9 @@
         
         .update-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.85); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
-        .update-box {
-            background: white; padding: 30px 25px; border-radius: 16px;
-            width: 80%; max-width: 320px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
+        .update-box { background: white; padding: 30px 25px; border-radius: 16px; width: 80%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .update-box h2 { margin-top: 0; color: var(--primary); font-size: 1.4rem; }
         .update-box p { color: #555; line-height: 1.5; font-size: 0.95rem; margin-bottom: 20px; }
         .update-btn { background: var(--primary); color: white; border: none; padding: 12px 0; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
@@ -112,7 +100,7 @@
 <div id="update-overlay" class="update-overlay" style="display: none;">
     <div class="update-box">
         <h2>🚀 發現新版本</h2>
-        <p>系統已更新 PA18 及 FP12 業績掛鉤計算邏輯，請立即更新以確保計算結果準確。</p>
+        <p>系統已更新 YEB 及 MB 計算規則，請立即更新以確保計算結果準確。</p>
         <button id="force-update-btn" class="update-btn" onclick="forceUpdateApp()">立即更新</button>
     </div>
 </div>
@@ -152,7 +140,7 @@
 
         <div class="card">
             <h3>📊 2. 每年業務預測輸入</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">點擊年份切換，獨立輸入該年業績 (系統會自動保留各年數據)：</p>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">點擊年份切換，獨立輸入該年保費 (系統會自動保留各年數據)：</p>
             
             <div class="year-tabs" id="year-tabs">
                 <button type="button" class="yr-tab active" id="tab-1" onclick="selectYear(1)">第 1 年</button>
@@ -176,8 +164,8 @@
 
         <div class="card">
             <h3>💼 第 <span id="fyc-title-yr">1</span> 年主動收入</h3>
-            <div class="res-row"><span>該年首年佣金 (FYC)：</span><span id="out-fyc">$0</span></div>
-            <div class="res-row" style="color: #16a085;">
+            <div class="res-row"><span>該年新單佣金 (FYC)：</span><span id="out-fyc">$0</span></div>
+            <div class="res-row" id="mb-row" style="color: #16a085;">
                 <span>該年獲發津貼 (MB) <br><small id="mb-label-note" style="color:#999;"></small></span>
                 <span id="out-mb">$0</span>
             </div>
@@ -199,8 +187,8 @@
 
         <div class="card actual-total">
             <h3>🏁 該年度實際總收入 (第 <span id="sum-title-yr">1</span> 年)</h3>
-            <div class="res-row"><span>該年主動收入 <span class="sub-note">(佣金+津貼)</span>：</span><span id="sum-active">$0</span></div>
-            <div class="res-row"><span>該年年終獎金 <span class="sub-note">(單次結算)</span>：</span><span id="sum-yeb">$0</span></div>
+            <div class="res-row"><span>該年主動收入 <span class="sub-note">(新單佣金+津貼)</span>：</span><span id="sum-active">$0</span></div>
+            <div class="res-row"><span>該年年終獎金 <span class="sub-note">(需FYC達12.8萬)</span>：</span><span id="sum-yeb">$0</span></div>
             <div class="res-row"><span>該年被動收入 <span class="sub-note">(過往累積)</span>：</span><span id="sum-passive">$0</span></div>
             <div class="res-row" id="sum-special-box" style="display:none; color:#ffb74d; font-weight:bold;">
                 <span>🎯 該年期滿額外大花紅：</span><span id="sum-special-amount">$0</span>
@@ -236,19 +224,41 @@
         <div class="card">
             <h3>🎁 晉升階梯與核心福利</h3>
             <div class="info-block" style="border-bottom:none; padding-bottom:0;">
-                <p class="info-desc">• <span class="info-highlight">助理分區經理 (AUM)：</span> 招募 1 名新晉顧問，業績達 HK$275,000 FYC Score。</p>
-                <p class="info-desc">• <span class="info-highlight">年終花紅：</span> 業績達標可獲 16.7% - 23.5% 獎賞。</p>
+                <p class="info-desc">• <span class="info-highlight">年終花紅 (YEB)：</span> 當年 FYC 達 HK$128,000 即獲 16.7%；達 HK$275,000 獲 19.4%；達 HK$391,000 獲 23.5% 最高獎賞。</p>
                 <p class="info-desc">• <span class="info-highlight">被動收入躍升：</span> 達第二級別要求，第2年續保花紅躍升至 90%，第3-6年為 45%。</p>
-                <p class="info-desc">• <span class="info-highlight">團隊 Overriding：</span> 晉升後可獲 10% - 18% 額外管理花紅。</p>
+                <p class="info-desc">• <span class="info-highlight">助理分區經理 (AUM)：</span> 招募 1 名新晉顧問，業績達 HK$275,000 FYC Score。晉升後可獲 10% - 18% 團隊管理花紅。</p>
             </div>
         </div>
     </div>
 
     <div id="view-cond" class="view-section">
         <div class="card">
-            <h3>📝 巨額花紅發放條件 (透明度展示)</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">要獲取期滿大花紅，不僅需要業績達標，還需要確保良好的業務質素與專業資格。</p>
+            <h3>📝 津貼與佣金對比要求 (Matching)</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">每月津貼(MB)的發放將嚴格與您的實際佣金掛鉤，確保資源投放於具生產力的顧問。如未達標，該月 MB 將按比例發放：</p>
             
+            <div class="info-block" style="background:#fdfdfd; padding:15px; border-radius:8px; border-left:4px solid #3498db;">
+                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#3498db; font-size:1.1rem;">🥇 FP12 計劃 (1.25倍)</span></div>
+                <p class="info-desc" style="margin-top:5px;">您的 FYC 必須達到目標 MB 的 <b>1.25 倍</b>。</p>
+                <ul class="check-list">
+                    <li><span class="info-highlight" style="color:#3498db;">例子：</span> 選擇 $10,000 MB，全年最高可獲 $120,000 津貼。</li>
+                    <li><span class="info-highlight" style="color:#3498db;">要求：</span> 全年需達成 FYC $150,000。</li>
+                    <li><span class="info-highlight" style="color:#3498db;">未達標情況：</span> 如當年只達成 FYC $75,000 (即要求的一半)，則按比例發放 $60,000 津貼。</li>
+                </ul>
+            </div>
+
+            <div class="info-block" style="background:#fcf9ff; padding:15px; border-radius:8px; border-left:4px solid #9b59b6; margin-bottom:0; border-bottom:none;">
+                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#9b59b6; font-size:1.1rem;">🚀 PA18 計劃 (1.5倍)</span></div>
+                <p class="info-desc" style="margin-top:5px;">您的 FYCC 必須達到目標 MB 的 <b>1.5 倍</b> (可計算下線佣金)。</p>
+                <ul class="check-list">
+                    <li><span class="info-highlight" style="color:#9b59b6;">例子：</span> 選擇 $20,000 MB，第1年最高可獲 $240,000 津貼。</li>
+                    <li><span class="info-highlight" style="color:#9b59b6;">要求：</span> 全年需達成 FYCC $360,000。</li>
+                    <li><span class="info-highlight" style="color:#9b59b6;">年期限制：</span> 注意！PA18 於第 2 年最多只會派發 <b>6 個月</b> (即最高 $120,000) 的常規津貼。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🎁 巨額花紅發放條件 (透明度展示)</h3>
             <div class="info-block" style="background:#fff9e6; padding:15px; border-radius:8px; border-left:4px solid #f39c12;">
                 <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#e74c3c; font-size:1.1rem;">🔥 PA18 特別業績花紅 (最高 7.2 倍)</span></div>
                 <p class="info-desc" style="margin-top:5px;">要獲得相等於 **MB 6.0倍 或 7.2倍** 的一次性巨額獎金，必須在首 24 個月內同時滿足以下 <span style="font-weight:bold; color:#d35400;">4 大條件</span>：</p>
@@ -260,7 +270,7 @@
                 </ul>
             </div>
 
-            <div class="info-block" style="background:#f4f9f4; padding:15px; border-radius:8px; border-left:4px solid #27ae60;">
+            <div class="info-block" style="background:#f4f9f4; padding:15px; border-radius:8px; border-left:4px solid #27ae60; margin-bottom:0; border-bottom:none;">
                 <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#27ae60; font-size:1.1rem;">🔥 TTFS 業績挑戰花紅 (最高 225%)</span></div>
                 <p class="info-desc" style="margin-top:5px;">於第 36 個月結算，要獲得高達年度收入基準 **225%** 的終極獎金，需滿足：</p>
                 <ul class="check-list">
@@ -269,24 +279,15 @@
                     <li><span class="info-highlight" style="color:#27ae60;">高標準質素：</span> 於第 36 個合約月，個人續保率達 **85%**。</li>
                 </ul>
             </div>
-            
-            <div class="info-block" style="background:#fdfdfd; padding:15px; border-radius:8px; border-left:4px solid #9b59b6; margin-bottom:0; border-bottom:none;">
-                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#9b59b6; font-size:1.1rem;">💡 津貼與佣金對比要求 (Matching)</span></div>
-                <p class="info-desc" style="margin-top:5px;">為確保業務健康發展，每月津貼(MB)將與您的實際佣金掛鉤：</p>
-                <ul class="check-list">
-                    <li><span class="info-highlight" style="color:#9b59b6;">PA18 計劃：</span> 您的 FYCC 必須達到 MB 的 <b>1.5 倍</b>。如未達標，該月 MB 將按比例發放。</li>
-                    <li><span class="info-highlight" style="color:#9b59b6;">FP12 計劃：</span> 您的 FYC 必須達到 MB 的 <b>1.25 倍</b>。如未達標，該月 MB 將按比例發放。</li>
-                </ul>
-            </div>
         </div>
     </div>
 
-    <div class="version-tag" id="app-version-display">版本號: v1.0.4</div>
+    <div class="version-tag" id="app-version-display">版本號: v1.0.5</div>
 </div>
 
 <script>
-    // 更新版本號 v1.0.4
-    const APP_VERSION = "v1.0.4"; 
+    // 更新版本號 v1.0.5
+    const APP_VERSION = "v1.0.5"; 
     document.getElementById('app-version-display').innerText = "版本號: " + APP_VERSION;
 
     function switchTab(tabId) {
@@ -402,7 +403,7 @@
         document.getElementById('in-ci25').value = d.ci25 ? d.ci25.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
         document.getElementById('in-sav').value = d.sav ? d.sav.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
 
-        // 切換年份時，自動顯示已結算的結果 (如果之前有按計算)
+        // 切換年份時，自動顯示已結算的結果
         runCalculation();
     }
 
@@ -429,13 +430,20 @@
             }
         }
 
-        // 核心運算：包含比例扣減邏輯
+        // 核心運算
         for (var i = 0; i < 7; i++) {
             var y = i + 1; 
             var d = planDataInputs[i];
 
+            // 該年新單佣金 (FYC)
             var fyc = (d.med * 0.25) + (d.ci18 * 0.50) + (d.ci25 * 0.54) + (d.sav * 0.25);
-            var yebRate = (fyc >= 391000) ? 0.235 : ((fyc >= 275000) ? 0.194 : 0.167);
+            
+            // 年終花紅 (YEB) - 加入最低門檻 128,000
+            var yebRate = 0;
+            if (fyc >= 391000) yebRate = 0.235;
+            else if (fyc >= 275000) yebRate = 0.194;
+            else if (fyc >= 128000) yebRate = 0.167; // 少於 12.8萬則為 0
+            
             var yeb = fyc > 0 ? (fyc * yebRate) : 0; 
             
             yearlyFYC[y] += fyc;
@@ -471,16 +479,24 @@
             }
         }
 
-        // 畫面渲染
+        // --- 畫面渲染邏輯 ---
         document.getElementById('out-fyc').innerText = format(yearlyFYC[currentYear]);
-        document.getElementById('out-mb').innerText = format(yearlyMB[currentYear]);
         
-        // 更新 MB 備註字眼
+        // 智能顯示或隱藏 MB 欄位
+        var showMB = false;
         var mbNote = "";
-        if (currentPackage === 'PA18' && currentYear === 1) mbNote = "(12個月，按比例)";
-        else if (currentPackage === 'PA18' && currentYear === 2) mbNote = "(最長6個月，按比例)";
-        else if (currentPackage === 'FP12' && currentYear === 1) mbNote = "(12個月，按比例)";
-        document.getElementById('mb-label-note').innerText = mbNote;
+        if (currentPackage === 'FP12' && currentYear === 1) { showMB = true; mbNote = "(最多12個月，按比例)"; }
+        else if (currentPackage === 'PA18' && currentYear === 1) { showMB = true; mbNote = "(最多12個月，按比例)"; }
+        else if (currentPackage === 'PA18' && currentYear === 2) { showMB = true; mbNote = "(最高6個月，按比例)"; }
+        else if (currentPackage === 'TTFS' && currentYear <= 3) { showMB = true; mbNote = "(12個月)"; }
+
+        if (showMB) {
+            document.getElementById('mb-row').style.display = 'flex';
+            document.getElementById('mb-label-note').innerText = mbNote;
+            document.getElementById('out-mb').innerText = format(yearlyMB[currentYear]);
+        } else {
+            document.getElementById('mb-row').style.display = 'none'; // 無 MB 則整行隱藏避免誤會
+        }
         
         var curSpecial = yearlySpecial[currentYear];
         var outSpecialBox = document.getElementById('out-special-box');
