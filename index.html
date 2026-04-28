@@ -100,12 +100,12 @@
 <div id="update-overlay" class="update-overlay" style="display: none;">
     <div class="update-box">
         <h2>🚀 發現新版本</h2>
-        <p>系統已更新 YEB 及 MB 計算規則，請立即更新以確保計算結果準確。</p>
+        <p>系統已更新保費智能連動功能，請立即更新以確保最佳體驗。</p>
         <button id="force-update-btn" class="update-btn" onclick="forceUpdateApp()">立即更新</button>
     </div>
 </div>
 
-<header>AIA 財富領袖系統</header>
+<header>AIA 精英領袖</header>
 
 <div class="app-nav">
     <div class="nav-btn active" id="nav-calc" onclick="switchTab('calc')"><span>💰</span>收入計算</div>
@@ -140,7 +140,7 @@
 
         <div class="card">
             <h3>📊 2. 每年業務預測輸入</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">點擊年份切換，獨立輸入該年保費 (系統會自動保留各年數據)：</p>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">智能連動：輸入保費後，系統會自動套用至往後年份，您亦可點擊年份獨立修改：</p>
             
             <div class="year-tabs" id="year-tabs">
                 <button type="button" class="yr-tab active" id="tab-1" onclick="selectYear(1)">第 1 年</button>
@@ -282,12 +282,12 @@
         </div>
     </div>
 
-    <div class="version-tag" id="app-version-display">版本號: v1.0.5</div>
+    <div class="version-tag" id="app-version-display">版本號: v1.0.6</div>
 </div>
 
 <script>
-    // 更新版本號 v1.0.5
-    const APP_VERSION = "v1.0.5"; 
+    // 更新版本號 v1.0.6
+    const APP_VERSION = "v1.0.6"; 
     document.getElementById('app-version-display').innerText = "版本號: " + APP_VERSION;
 
     function switchTab(tabId) {
@@ -353,12 +353,15 @@
         document.getElementById('req-box').innerHTML = reqHtml;
     }
 
-    // 數據全域保留區 (7年獨立保費數據)
+    // 數據全域保留區 (加入 modified 標記以實現智能聯動)
     var planDataInputs = [
-        { med: 0, ci18: 0, ci25: 0, sav: 0 }, { med: 0, ci18: 0, ci25: 0, sav: 0 },
-        { med: 0, ci18: 0, ci25: 0, sav: 0 }, { med: 0, ci18: 0, ci25: 0, sav: 0 },
-        { med: 0, ci18: 0, ci25: 0, sav: 0 }, { med: 0, ci18: 0, ci25: 0, sav: 0 },
-        { med: 0, ci18: 0, ci25: 0, sav: 0 }
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
+        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false }
     ];
     var currentYear = 1;
 
@@ -367,13 +370,25 @@
         return "$" + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    // 只保留數字與千分位，不觸發計算
+    // 智能連動輸入邏輯
     function handleInput(elem, type) {
         var valStr = elem.value.replace(/\D/g, ''); 
         var val = parseInt(valStr, 10);
         if (isNaN(val)) val = 0;
         
         planDataInputs[currentYear - 1][type] = val;
+        planDataInputs[currentYear - 1].modified = true; // 標記該年已被手動修改
+
+        // 智能複製：將輸入的數值自動套用到往後「未被手動修改過」的年份
+        var sourceData = planDataInputs[currentYear - 1];
+        for (var i = currentYear; i < 7; i++) {
+            if (!planDataInputs[i].modified) {
+                planDataInputs[i].med = sourceData.med;
+                planDataInputs[i].ci18 = sourceData.ci18;
+                planDataInputs[i].ci25 = sourceData.ci25;
+                planDataInputs[i].sav = sourceData.sav;
+            }
+        }
         
         if (val > 0) { 
             elem.value = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -396,7 +411,7 @@
         document.getElementById('sum-title-yr').innerText = y;
         document.getElementById('cum-title-yr').innerText = y;
 
-        // 載入該年儲存的數據
+        // 載入該年儲存的數據 (可能已被智能連動填入)
         var d = planDataInputs[y - 1];
         document.getElementById('in-med').value = d.med ? d.med.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
         document.getElementById('in-ci18').value = d.ci18 ? d.ci18.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
@@ -482,7 +497,7 @@
         // --- 畫面渲染邏輯 ---
         document.getElementById('out-fyc').innerText = format(yearlyFYC[currentYear]);
         
-        // 智能顯示或隱藏 MB 欄位
+        // 智能顯示或隱藏 MB 欄位，避免過期引發誤會
         var showMB = false;
         var mbNote = "";
         if (currentPackage === 'FP12' && currentYear === 1) { showMB = true; mbNote = "(最多12個月，按比例)"; }
@@ -495,7 +510,7 @@
             document.getElementById('mb-label-note').innerText = mbNote;
             document.getElementById('out-mb').innerText = format(yearlyMB[currentYear]);
         } else {
-            document.getElementById('mb-row').style.display = 'none'; // 無 MB 則整行隱藏避免誤會
+            document.getElementById('mb-row').style.display = 'none'; // 無 MB 則整行隱藏
         }
         
         var curSpecial = yearlySpecial[currentYear];
@@ -571,7 +586,7 @@
 
     window.onload = function() {
         setPackage('PA18'); 
-        runCalculation(); // 初始載入算一次，後續由手動觸發
+        runCalculation(); 
     };
 </script>
 
