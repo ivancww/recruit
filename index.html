@@ -14,7 +14,7 @@
             --primary: #d31145;
             --secondary: #2c3e50;
             --passive-gold: #f39c12;
-            --bonus-red: #e74c3c;
+            --mdrt-purple: #9b59b6;
             --bg: #f4f6f9;
         }
         body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 30px; color: #333; }
@@ -40,37 +40,36 @@
         .pkg-tab { flex: 1; padding: 12px 5px; border: 1px solid var(--primary); background: white; color: var(--primary); border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; text-align: center; }
         .pkg-tab.active { background: var(--primary); color: white; }
 
-        .current-input-label { background: #fff5f7; color: var(--primary); padding: 10px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; border: 1px dashed #ffcdd2; font-size: 0.9rem; line-height: 1.5; }
+        .current-input-label { background: #fff5f7; color: var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px dashed #ffcdd2; font-size: 1rem; line-height: 1.6; }
+        .income-highlight { font-size: 1.15rem; font-weight: bold; color: #d35400; }
         
         .input-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.95rem; color: var(--secondary); }
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.05rem; box-sizing: border-box; color: var(--primary); font-weight: bold; outline: none; background: #fff; }
         
+        .checkbox-group { display: flex; align-items: center; background: #fdf5e6; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #f39c12; }
+        .checkbox-group input[type="checkbox"] { width: 22px; height: 22px; margin-right: 10px; accent-color: var(--primary); }
+        .checkbox-group label { margin-bottom: 0; color: #d35400; font-size: 0.95rem; cursor: pointer; }
+
         .calc-btn {
             background: linear-gradient(135deg, var(--primary), #e74c3c); color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 6px 15px rgba(211,17,69,0.35); transition: 0.2s;
         }
         .calc-btn:active { transform: scale(0.96); box-shadow: 0 2px 6px rgba(211,17,69,0.2); }
 
-        .switch-container { display: flex; align-items: center; justify-content: space-between; background: #fdf5e6; padding: 12px; border-radius: 8px; border: 1px solid #f39c12; margin-top: 15px; }
-        .switch-label { font-weight: bold; color: #d35400; font-size: 0.95rem; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #f39c12; }
-        input:checked + .slider:before { transform: translateX(22px); }
-
         .res-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 1rem; align-items: center; }
         .res-row.highlight { color: var(--primary); font-weight: bold; font-size: 1.15rem; }
         .res-row.passive { color: var(--passive-gold); font-weight: bold; }
-        .res-row.special-bonus { color: var(--bonus-red); font-weight: bold; font-size: 1.1rem; background: #ffebee; padding: 8px; border-radius: 6px; }
         .badge { background: var(--passive-gold); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 5px; }
+        .badge-mdrt { background: var(--mdrt-purple); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 5px; }
         
+        .pillar-card { background: #fffcf4; border: 2px solid #f39c12; }
+        .pillar-card h3 { color: #d35400; border-bottom: 1px solid #f39c12; }
+        .pillar-row { display: flex; justify-content: space-between; margin: 12px 0; font-size: 1.05rem; font-weight: bold; color: #444; align-items: center; border-bottom: 1px dashed #ccc; padding-bottom: 8px; }
+        .pillar-row:last-child { border-bottom: none; }
+
         .actual-total { background: #2c3e50; color: white; border: none; }
         .actual-total h3 { color: #ecf0f1; border-bottom: 1px solid #4a6278; }
-        .actual-total .res-row.highlight { color: #f1c40f; font-size: 1.2rem; border-top: 1px dashed #4a6278; padding-top: 15px; }
-        .actual-total .res-row { border-bottom: 1px solid #3d566e; padding-bottom: 8px; }
-        .actual-total .res-row:last-child { border-bottom: none; }
+        .actual-total .res-row.highlight { color: #f1c40f; font-size: 1.3rem; border-top: 1px dashed #4a6278; padding-top: 15px; }
         .cumulative-row { color: #2ecc71; font-size: 1.5rem; font-weight: bold; border-top: 2px solid #2ecc71; margin-top: 15px; padding-top: 15px; display: flex; justify-content: space-between; }
 
         .info-block { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
@@ -92,15 +91,14 @@
         .update-box h2 { margin-top: 0; color: var(--primary); font-size: 1.4rem; }
         .update-box p { color: #555; line-height: 1.5; font-size: 0.95rem; margin-bottom: 20px; }
         .update-btn { background: var(--primary); color: white; border: none; padding: 12px 0; width: 100%; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-        .update-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
 <div id="update-overlay" class="update-overlay" style="display: none;">
     <div class="update-box">
-        <h2>🚀 發現新版本</h2>
-        <p>系統已更新保費智能連動功能，請立即更新以確保最佳體驗。</p>
+        <h2>🚀 發現新版本 v1.0.7</h2>
+        <p>系統已升級：新增 MDRT 連續獎金及卓越顧問計算，並優化四大收入顯示框！</p>
         <button id="force-update-btn" class="update-btn" onclick="forceUpdateApp()">立即更新</button>
     </div>
 </div>
@@ -115,6 +113,7 @@
 
 <div class="container">
     
+    <!-- ==================== 頁面一：收入計算機 ==================== -->
     <div id="view-calc" class="view-section active">
         
         <div class="card">
@@ -125,17 +124,10 @@
                 <button type="button" class="pkg-tab" id="pkg-TTFS" onclick="setPackage('TTFS')">TTFS</button>
             </div>
             <div class="input-group">
-                <label>💵 選擇目標每月花紅 (MB)</label>
+                <label>💵 選擇目標每月津貼 (MB)</label>
                 <select id="mb-select" onchange="updateRequirements()"></select>
             </div>
             <div id="req-box" class="current-input-label"></div>
-
-            <div class="switch-container" id="special-bonus-box" style="display:none;">
-                <div class="switch-label">🚀 模擬完美達標 (領取期滿大花紅)</div>
-                <label class="switch">
-                    <input type="checkbox" id="achieve-bonus">
-                </label>
-            </div>
         </div>
 
         <div class="card">
@@ -155,56 +147,67 @@
             <div class="current-input-label" style="text-align: center;">✏️ 當前正在輸入：第 <span id="input-title-yr">1</span> 年業績</div>
 
             <div class="input-group"><label>🏥 醫療保險</label><input type="tel" id="in-med" placeholder="0" oninput="handleInput(this, 'med')"></div>
-            <div class="input-group"><label>🛡️ 危疾 (18年期)</label><input type="tel" id="in-ci18" placeholder="0" oninput="handleInput(this, 'ci18')"></div>
-            <div class="input-group"><label>💎 危疾 (25年期)</label><input type="tel" id="in-ci25" placeholder="0" oninput="handleInput(this, 'ci25')"></div>
+            <!-- 危疾產品精簡，移除年期顯示 -->
+            <div class="input-group"><label>🛡️ 危疾保險</label><input type="tel" id="in-ci" placeholder="0" oninput="handleInput(this, 'ci')"></div>
             <div class="input-group"><label>💰 儲蓄保險</label><input type="tel" id="in-sav" placeholder="0" oninput="handleInput(this, 'sav')"></div>
             
+            <!-- MDRT 額外獎金選項 -->
+            <div class="checkbox-group" style="margin-top: 15px;">
+                <input type="checkbox" id="chk-continuous-mdrt">
+                <label for="chk-continuous-mdrt">🏅 達成連續 MDRT (額外花紅最高 6.5萬)</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="chk-excellent-agent">
+                <label for="chk-excellent-agent">💎 達成卓越顧問 (額外花紅 1.5萬)</label>
+            </div>
+
+            <!-- 手動計算按鈕 -->
             <button type="button" class="calc-btn" onclick="runCalculation()">🧮 立即計算 / 更新結果</button>
         </div>
 
-        <div class="card">
-            <h3>💼 第 <span id="fyc-title-yr">1</span> 年主動收入</h3>
-            <div class="res-row"><span>該年新單佣金 (FYC)：</span><span id="out-fyc">$0</span></div>
-            <div class="res-row" id="mb-row" style="color: #16a085;">
-                <span>該年獲發津貼 (MB) <br><small id="mb-label-note" style="color:#999;"></small></span>
-                <span id="out-mb">$0</span>
+        <!-- 全新：四大收入來源獨立框 -->
+        <div class="card pillar-card">
+            <h3>📈 該年四大收入來源 (第 <span id="pillar-title-yr">1</span> 年)</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">清晰拆解您的財富版圖，了解被動收入的威力：</p>
+            
+            <div class="pillar-row">
+                <span>1️⃣ 該年新單佣金 (FYC)</span>
+                <span id="p-fyc">$0</span>
             </div>
-            <div id="out-special-box" class="res-row special-bonus" style="display:none;">
-                <span id="special-bonus-name">期滿特別花紅：</span><span id="out-special-amount">$0</span>
+            <div class="pillar-row">
+                <span>2️⃣ 該年年終獎金 (YEB)</span>
+                <span id="p-yeb">$0</span>
             </div>
-        </div>
-
-        <div class="card" style="border: 2px solid var(--passive-gold);">
-            <h3>🌟 續保佣金 + 花紅 <span class="badge">被動收入</span></h3>
-            <div style="background: #fffbf0; padding: 15px; border-radius: 8px; margin-top: 10px;">
-                <div class="res-row"><span>該年續保佣金：</span><span id="sel-rc">$0</span></div>
-                <div class="res-row passive"><span>該年續保花紅：</span><span id="sel-bonus">$0</span></div>
-                <div class="res-row highlight" style="color: var(--passive-gold); border-top: 1px solid #f39c12; padding-top: 10px;">
-                    <span>該年被動收入總計：</span><span id="sel-total">$0</span>
-                </div>
+            <div class="pillar-row" style="color: var(--mdrt-purple);">
+                <span>3️⃣ MDRT 獎勵花紅 <span class="badge-mdrt">達標獎賞</span></span>
+                <span id="p-mdrt">$0</span>
+            </div>
+            <div class="pillar-row" style="color: var(--passive-gold);">
+                <span>4️⃣ 續保佣金及花紅 <span class="badge">被動收入</span></span>
+                <span id="p-rc">$0</span>
+            </div>
+            
+            <!-- 動態顯示當年的津貼支援 -->
+            <div class="pillar-row" id="p-mb-row" style="color: #16a085; font-size: 0.95rem;">
+                <span>➕ 公司額外津貼 (MB) <small id="p-mb-note"></small></span>
+                <span id="p-mb">$0</span>
             </div>
         </div>
 
         <div class="card actual-total">
-            <h3>🏁 該年度實際總收入 (第 <span id="sum-title-yr">1</span> 年)</h3>
-            <div class="res-row"><span>該年主動收入 <span class="sub-note">(新單佣金+津貼)</span>：</span><span id="sum-active">$0</span></div>
-            <div class="res-row"><span>該年年終獎金 <span class="sub-note">(需FYC達12.8萬)</span>：</span><span id="sum-yeb">$0</span></div>
-            <div class="res-row"><span>該年被動收入 <span class="sub-note">(過往累積)</span>：</span><span id="sum-passive">$0</span></div>
-            <div class="res-row" id="sum-special-box" style="display:none; color:#ffb74d; font-weight:bold;">
-                <span>🎯 該年期滿額外大花紅：</span><span id="sum-special-amount">$0</span>
-            </div>
-            
+            <h3>🏁 該年度實際總結算 (第 <span id="sum-title-yr">1</span> 年)</h3>
             <div class="res-row highlight">
                 <span>該年單年總收入：</span><span id="grand-total">$0</span>
             </div>
 
             <div class="cumulative-row">
-                <span>📈 歷年累積總收入：</span><span id="cumulative-total">$0</span>
+                <span>💰 歷年累積總收入：</span><span id="cumulative-total">$0</span>
             </div>
             <p style="font-size: 0.75rem; color: #aaa; margin-top: 5px; text-align: right;">(精確加總由第 1 年至第 <span id="cum-title-yr">1</span> 年間所有真實落袋之收入)</p>
         </div>
     </div>
 
+    <!-- ==================== 頁面二：入職與福利 ==================== -->
     <div id="view-info" class="view-section">
         <div class="card">
             <h3>🤝 招募計劃入職資格</h3>
@@ -221,6 +224,16 @@
                 <p class="info-desc">• 專為持有 **高才通 (TTPS) / 優才 (QMAS)** 簽證人士<br>• TTFS25 / 30 級別可豁免入息證明</p>
             </div>
         </div>
+        
+        <div class="card">
+            <h3>🏆 2026 MDRT 獎勵計劃</h3>
+            <div class="info-block" style="background:#fcf9ff; padding:15px; border-radius:8px; border-left:4px solid var(--mdrt-purple); border-bottom:none;">
+                <p class="info-desc">• <span class="info-highlight" style="color:var(--mdrt-purple);">基本花紅：</span> 達成 MDRT 獲 $30,000；COT 獲 $60,000；TOT 獲高達 $120,000。</p>
+                <p class="info-desc">• <span class="info-highlight" style="color:var(--mdrt-purple);">連續 MDRT 花紅：</span> 連續達成可額外獲 $20,000 (MDRT) 至 $65,000 (TOT)。</p>
+                <p class="info-desc">• <span class="info-highlight" style="color:var(--mdrt-purple);">卓越顧問花紅：</span> 達成指定要求可再獲 $15,000。</p>
+            </div>
+        </div>
+
         <div class="card">
             <h3>🎁 晉升階梯與核心福利</h3>
             <div class="info-block" style="border-bottom:none; padding-bottom:0;">
@@ -231,6 +244,7 @@
         </div>
     </div>
 
+    <!-- ==================== 頁面三：達標條件說明 ==================== -->
     <div id="view-cond" class="view-section">
         <div class="card">
             <h3>📝 津貼與佣金對比要求 (Matching)</h3>
@@ -246,48 +260,24 @@
                 </ul>
             </div>
 
-            <div class="info-block" style="background:#fcf9ff; padding:15px; border-radius:8px; border-left:4px solid #9b59b6; margin-bottom:0; border-bottom:none;">
-                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#9b59b6; font-size:1.1rem;">🚀 PA18 計劃 (1.5倍)</span></div>
+            <div class="info-block" style="background:#fcf9ff; padding:15px; border-radius:8px; border-left:4px solid #d31145; margin-bottom:0; border-bottom:none;">
+                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#d31145; font-size:1.1rem;">🚀 PA18 計劃 (1.5倍)</span></div>
                 <p class="info-desc" style="margin-top:5px;">您的 FYCC 必須達到目標 MB 的 <b>1.5 倍</b> (可計算下線佣金)。</p>
                 <ul class="check-list">
-                    <li><span class="info-highlight" style="color:#9b59b6;">例子：</span> 選擇 $20,000 MB，第1年最高可獲 $240,000 津貼。</li>
-                    <li><span class="info-highlight" style="color:#9b59b6;">要求：</span> 全年需達成 FYCC $360,000。</li>
-                    <li><span class="info-highlight" style="color:#9b59b6;">年期限制：</span> 注意！PA18 於第 2 年最多只會派發 <b>6 個月</b> (即最高 $120,000) 的常規津貼。</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>🎁 巨額花紅發放條件 (透明度展示)</h3>
-            <div class="info-block" style="background:#fff9e6; padding:15px; border-radius:8px; border-left:4px solid #f39c12;">
-                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#e74c3c; font-size:1.1rem;">🔥 PA18 特別業績花紅 (最高 7.2 倍)</span></div>
-                <p class="info-desc" style="margin-top:5px;">要獲得相等於 **MB 6.0倍 或 7.2倍** 的一次性巨額獎金，必須在首 24 個月內同時滿足以下 <span style="font-weight:bold; color:#d35400;">4 大條件</span>：</p>
-                <ul class="check-list">
-                    <li><span class="info-highlight">佣金要求：</span> 達到指定之首年佣金總額 (FYCC) 目標。</li>
-                    <li><span class="info-highlight">活動量要求：</span> 成功促成最少 **24 張** 獲批核之人壽保單。</li>
-                    <li><span class="info-highlight">業務質素：</span> 於第 24 個合約月，個人續保率必須達 **75%** 或以上。</li>
-                    <li><span class="info-highlight">專業資格：</span> 必須成功註冊最少 **3 個** 認可保險中介人牌照。</li>
-                </ul>
-            </div>
-
-            <div class="info-block" style="background:#f4f9f4; padding:15px; border-radius:8px; border-left:4px solid #27ae60; margin-bottom:0; border-bottom:none;">
-                <div class="info-title" style="background:none; border:none; padding:0;"><span style="color:#27ae60; font-size:1.1rem;">🔥 TTFS 業績挑戰花紅 (最高 225%)</span></div>
-                <p class="info-desc" style="margin-top:5px;">於第 36 個月結算，要獲得高達年度收入基準 **225%** 的終極獎金，需滿足：</p>
-                <ul class="check-list">
-                    <li><span class="info-highlight" style="color:#27ae60;">長線業績：</span> 第 1 至第 36 個合約月份內達到 FYCC 要求。</li>
-                    <li><span class="info-highlight" style="color:#27ae60;">合約維持：</span> 第 25 至 36 個月期間維持合約最低要求。</li>
-                    <li><span class="info-highlight" style="color:#27ae60;">高標準質素：</span> 於第 36 個合約月，個人續保率達 **85%**。</li>
+                    <li><span class="info-highlight" style="color:#d31145;">例子：</span> 選擇 $20,000 MB，第1年最高可獲 $240,000 津貼。</li>
+                    <li><span class="info-highlight" style="color:#d31145;">要求：</span> 全年需達成 FYCC $360,000。</li>
+                    <li><span class="info-highlight" style="color:#d31145;">年期限制：</span> 注意！PA18 於第 2 年最多只會派發 <b>6 個月</b> (即最高 $120,000) 的常規津貼。</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <div class="version-tag" id="app-version-display">版本號: v1.0.6</div>
+    <!-- 版號顯示 -->
+    <div class="version-tag" id="app-version-display">版本號: v1.0.7</div>
 </div>
 
 <script>
-    // 更新版本號 v1.0.6
-    const APP_VERSION = "v1.0.6"; 
+    const APP_VERSION = "v1.0.7"; 
     document.getElementById('app-version-display').innerText = "版本號: " + APP_VERSION;
 
     function switchTab(tabId) {
@@ -326,16 +316,6 @@
             selectEl.appendChild(opt);
         }
 
-        var sbBox = document.getElementById('special-bonus-box');
-        var sbCheck = document.getElementById('achieve-bonus');
-        if(pkg === 'PA18' || pkg === 'TTFS') {
-            sbBox.style.display = 'flex';
-            sbCheck.checked = false;
-        } else {
-            sbBox.style.display = 'none';
-            sbCheck.checked = false;
-        }
-
         updateRequirements();
     }
 
@@ -343,25 +323,26 @@
         var mbAmountStr = document.getElementById('mb-select').value;
         var mb = parseInt(mbAmountStr, 10) || 0;
         var reqHtml = '';
+        
+        // 更改目標花紅位置顯示邏輯
         if(currentPackage === 'FP12') {
-            reqHtml = '📌 佣金對比要求 (1.25x)：FYC $' + (mb * 1.25).toLocaleString('en-US') + ' / 月';
+            reqHtml = `📌 目標該月佣金 (FYC)：<span class="income-highlight">$${(mb * 1.25).toLocaleString('en-US')}</span><br>
+                       📌 實際該月總收入 (佣金+津貼)：<span class="income-highlight">$${(mb * 1.25 + mb).toLocaleString('en-US')}</span>`;
         } else if(currentPackage === 'PA18') {
-            reqHtml = '📌 佣金對比要求 (1.5x)：FYCC $' + (mb * 1.5).toLocaleString('en-US') + ' / 月 <br>💡 (可計算下線佣金達標！)';
+            reqHtml = `📌 目標該月佣金 (FYCC)：<span class="income-highlight">$${(mb * 1.5).toLocaleString('en-US')}</span><br>
+                       📌 實際該月總收入 (佣金+津貼)：<span class="income-highlight">$${(mb * 1.5 + mb).toLocaleString('en-US')}</span>`;
         } else if(currentPackage === 'TTFS') {
-            reqHtml = '📌 首年總要求 (FYCC)： $' + (mb * 12).toLocaleString('en-US') + ' <br>📌 次年總要求 (FYCC)： $' + (mb * 14).toLocaleString('en-US');
+            reqHtml = `📌 第1年 FYCC 總要求：<span class="income-highlight">$${(mb * 12).toLocaleString('en-US')}</span>`;
         }
         document.getElementById('req-box').innerHTML = reqHtml;
     }
 
-    // 數據全域保留區 (加入 modified 標記以實現智能聯動)
+    // 數據全域保留區，移除了 ci25
     var planDataInputs = [
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false },
-        { med: 0, ci18: 0, ci25: 0, sav: 0, modified: false }
+        { med: 0, ci: 0, sav: 0, modified: false }, { med: 0, ci: 0, sav: 0, modified: false },
+        { med: 0, ci: 0, sav: 0, modified: false }, { med: 0, ci: 0, sav: 0, modified: false },
+        { med: 0, ci: 0, sav: 0, modified: false }, { med: 0, ci: 0, sav: 0, modified: false },
+        { med: 0, ci: 0, sav: 0, modified: false }
     ];
     var currentYear = 1;
 
@@ -370,22 +351,19 @@
         return "$" + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    // 智能連動輸入邏輯
     function handleInput(elem, type) {
         var valStr = elem.value.replace(/\D/g, ''); 
         var val = parseInt(valStr, 10);
         if (isNaN(val)) val = 0;
         
         planDataInputs[currentYear - 1][type] = val;
-        planDataInputs[currentYear - 1].modified = true; // 標記該年已被手動修改
+        planDataInputs[currentYear - 1].modified = true;
 
-        // 智能複製：將輸入的數值自動套用到往後「未被手動修改過」的年份
         var sourceData = planDataInputs[currentYear - 1];
         for (var i = currentYear; i < 7; i++) {
             if (!planDataInputs[i].modified) {
                 planDataInputs[i].med = sourceData.med;
-                planDataInputs[i].ci18 = sourceData.ci18;
-                planDataInputs[i].ci25 = sourceData.ci25;
+                planDataInputs[i].ci = sourceData.ci;
                 planDataInputs[i].sav = sourceData.sav;
             }
         }
@@ -399,90 +377,86 @@
 
     function selectYear(y) {
         currentYear = y;
-        
         for (var i = 1; i <= 7; i++) {
             document.getElementById('tab-' + i).className = 'yr-tab';
         }
         document.getElementById('tab-' + y).className = 'yr-tab active';
         
         document.getElementById('input-title-yr').innerText = y;
-        document.getElementById('fyc-title-yr').innerText = y;
-        document.getElementById('passive-title-yr').innerText = y;
+        document.getElementById('pillar-title-yr').innerText = y;
         document.getElementById('sum-title-yr').innerText = y;
         document.getElementById('cum-title-yr').innerText = y;
 
-        // 載入該年儲存的數據 (可能已被智能連動填入)
         var d = planDataInputs[y - 1];
         document.getElementById('in-med').value = d.med ? d.med.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
-        document.getElementById('in-ci18').value = d.ci18 ? d.ci18.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
-        document.getElementById('in-ci25').value = d.ci25 ? d.ci25.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
+        document.getElementById('in-ci').value = d.ci ? d.ci.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
         document.getElementById('in-sav').value = d.sav ? d.sav.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '';
 
-        // 切換年份時，自動顯示已結算的結果
         runCalculation();
     }
 
-    // 按下大按鈕時，執行完整運算
     function runCalculation() {
         var mbAmountStr = document.getElementById('mb-select').value;
         var mbAmount = parseInt(mbAmountStr, 10) || 0;
         
-        var achieveBonusBox = document.getElementById('achieve-bonus');
-        var achieveBonus = achieveBonusBox ? achieveBonusBox.checked : false;
+        var isContinuous = document.getElementById('chk-continuous-mdrt').checked;
+        var isExcellent = document.getElementById('chk-excellent-agent').checked;
         
         var yearlyFYC = [0,0,0,0,0,0,0,0];
         var yearlyMB =  [0,0,0,0,0,0,0,0]; 
         var yearlyYEB = [0,0,0,0,0,0,0,0];
         var yearlyRC =  [0,0,0,0,0,0,0,0];
         var yearlyBonus=[0,0,0,0,0,0,0,0];
-        var yearlySpecial = [0,0,0,0,0,0,0,0];
+        var yearlyMDRT = [0,0,0,0,0,0,0,0];
 
-        if (achieveBonus) {
-            if (currentPackage === 'PA18') {
-                yearlySpecial[2] = mbAmount * 7.2; 
-            } else if (currentPackage === 'TTFS') {
-                yearlySpecial[3] = mbAmount * 12 * 2.25; 
-            }
-        }
-
-        // 核心運算
         for (var i = 0; i < 7; i++) {
             var y = i + 1; 
             var d = planDataInputs[i];
 
-            // 該年新單佣金 (FYC)
-            var fyc = (d.med * 0.25) + (d.ci18 * 0.50) + (d.ci25 * 0.54) + (d.sav * 0.25);
+            // 統一危疾佣金計算 (0.50)
+            var fyc = (d.med * 0.25) + (d.ci * 0.50) + (d.sav * 0.25);
             
-            // 年終花紅 (YEB) - 加入最低門檻 128,000
+            // 年終花紅 (YEB) - 需 FYC 達 128,000
             var yebRate = 0;
             if (fyc >= 391000) yebRate = 0.235;
             else if (fyc >= 275000) yebRate = 0.194;
-            else if (fyc >= 128000) yebRate = 0.167; // 少於 12.8萬則為 0
+            else if (fyc >= 128000) yebRate = 0.167;
             
             var yeb = fyc > 0 ? (fyc * yebRate) : 0; 
             
             yearlyFYC[y] += fyc;
             yearlyYEB[y] += yeb; 
 
-            // MB Matching 邏輯 (業績不足則按比例)
+            // 新增 MDRT 獎金計算邏輯
+            var mdrtBonus = 0;
+            if (fyc >= 2656000) { // TOT
+                mdrtBonus = 120000 + (isContinuous ? 65000 : 0) + (isExcellent ? 15000 : 0);
+            } else if (fyc >= 1328000) { // COT
+                mdrtBonus = 60000 + (isContinuous ? 35000 : 0) + (isExcellent ? 15000 : 0);
+            } else if (fyc >= 391000) { // MDRT
+                mdrtBonus = 30000 + (isContinuous ? 20000 : 0) + (isExcellent ? 15000 : 0);
+            }
+            yearlyMDRT[y] = mdrtBonus;
+
+            // MB Matching 邏輯
             if (currentPackage === 'FP12' && y === 1) { 
                 yearlyMB[y] = Math.min(mbAmount * 12, fyc / 1.25); 
             } else if (currentPackage === 'PA18') { 
                 if (y === 1) {
                     yearlyMB[y] = Math.min(mbAmount * 12, fyc / 1.5); 
                 } else if (y === 2) {
-                    yearlyMB[y] = Math.min(mbAmount * 6, fyc / 1.5); // 第2年最多只派6個月
+                    yearlyMB[y] = Math.min(mbAmount * 6, fyc / 1.5); // 第2年最多派6個月
                 }
             } else if (currentPackage === 'TTFS' && y <= 3) { 
-                yearlyMB[y] = mbAmount * 12; // TTFS 通常固定
+                yearlyMB[y] = mbAmount * 12; 
             }
 
-            var rcBase = (d.med * 0.20) + (d.ci18 * 0.10) + (d.ci25 * 0.15) + (d.sav * 0.05);
+            // 被動收入 (危疾續保率改為 0.10)
+            var rcBase = (d.med * 0.20) + (d.ci * 0.10) + (d.sav * 0.05);
             var isElite = fyc >= 275000;
             var r2Rate = isElite ? 0.90 : 0.70;
             var r36Rate = isElite ? 0.45 : 0.35;
 
-            // 被動收入延續至未來
             for (var calY = y + 1; calY <= 7; calY++) {
                 var age = calY - y + 1; 
                 yearlyRC[calY] += rcBase;
@@ -494,55 +468,33 @@
             }
         }
 
-        // --- 畫面渲染邏輯 ---
-        document.getElementById('out-fyc').innerText = format(yearlyFYC[currentYear]);
-        
-        // 智能顯示或隱藏 MB 欄位，避免過期引發誤會
+        // --- 四大收入來源畫面渲染 ---
+        document.getElementById('p-fyc').innerText = format(yearlyFYC[currentYear]);
+        document.getElementById('p-rc').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
+        document.getElementById('p-yeb').innerText = format(yearlyYEB[currentYear]);
+        document.getElementById('p-mdrt').innerText = format(yearlyMDRT[currentYear]);
+
         var showMB = false;
         var mbNote = "";
-        if (currentPackage === 'FP12' && currentYear === 1) { showMB = true; mbNote = "(最多12個月，按比例)"; }
-        else if (currentPackage === 'PA18' && currentYear === 1) { showMB = true; mbNote = "(最多12個月，按比例)"; }
+        if (currentPackage === 'FP12' && currentYear === 1) { showMB = true; mbNote = "(12個月，按比例)"; }
+        else if (currentPackage === 'PA18' && currentYear === 1) { showMB = true; mbNote = "(12個月，按比例)"; }
         else if (currentPackage === 'PA18' && currentYear === 2) { showMB = true; mbNote = "(最高6個月，按比例)"; }
         else if (currentPackage === 'TTFS' && currentYear <= 3) { showMB = true; mbNote = "(12個月)"; }
 
         if (showMB) {
-            document.getElementById('mb-row').style.display = 'flex';
-            document.getElementById('mb-label-note').innerText = mbNote;
-            document.getElementById('out-mb').innerText = format(yearlyMB[currentYear]);
+            document.getElementById('p-mb-row').style.display = 'flex';
+            document.getElementById('p-mb-note').innerText = mbNote;
+            document.getElementById('p-mb').innerText = format(yearlyMB[currentYear]);
         } else {
-            document.getElementById('mb-row').style.display = 'none'; // 無 MB 則整行隱藏
-        }
-        
-        var curSpecial = yearlySpecial[currentYear];
-        var outSpecialBox = document.getElementById('out-special-box');
-        var sumSpecialBox = document.getElementById('sum-special-box');
-        
-        if(curSpecial > 0) {
-            outSpecialBox.style.display = 'flex';
-            sumSpecialBox.style.display = 'flex';
-            document.getElementById('special-bonus-name').innerText = (currentPackage === 'PA18') ? '🔥 PA18 7.2倍特別花紅：' : '🔥 TTFS 225%挑戰花紅：';
-            document.getElementById('out-special-amount').innerText = format(curSpecial);
-            document.getElementById('sum-special-amount').innerText = format(curSpecial);
-        } else {
-            outSpecialBox.style.display = 'none';
-            sumSpecialBox.style.display = 'none';
+            document.getElementById('p-mb-row').style.display = 'none'; 
         }
 
-        document.getElementById('sel-rc').innerText = format(yearlyRC[currentYear]);
-        document.getElementById('sel-bonus').innerText = format(yearlyBonus[currentYear]);
-        document.getElementById('sel-total').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
-
-        document.getElementById('sum-active').innerText = format(yearlyFYC[currentYear] + yearlyMB[currentYear]);
-        document.getElementById('sum-yeb').innerText = format(yearlyYEB[currentYear]);
-        document.getElementById('sum-passive').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
-        
-        var currentYearTotal = yearlyFYC[currentYear] + yearlyMB[currentYear] + yearlyYEB[currentYear] + yearlyRC[currentYear] + yearlyBonus[currentYear] + curSpecial;
+        var currentYearTotal = yearlyFYC[currentYear] + yearlyMB[currentYear] + yearlyYEB[currentYear] + yearlyRC[currentYear] + yearlyBonus[currentYear] + yearlyMDRT[currentYear];
         document.getElementById('grand-total').innerText = format(currentYearTotal);
 
-        // 累積結算 (包含歷年數據)
         var cumulativeTotal = 0;
         for (var k = 1; k <= currentYear; k++) {
-            cumulativeTotal += yearlyFYC[k] + yearlyMB[k] + yearlyYEB[k] + yearlyRC[k] + yearlyBonus[k] + yearlySpecial[k];
+            cumulativeTotal += yearlyFYC[k] + yearlyMB[k] + yearlyYEB[k] + yearlyRC[k] + yearlyBonus[k] + yearlyMDRT[k];
         }
         document.getElementById('cumulative-total').innerText = format(cumulativeTotal);
     }
