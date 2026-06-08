@@ -79,7 +79,6 @@
         .check-list { list-style: none; padding-left: 0; margin-top: 5px; }
         .check-list li { position: relative; padding-left: 25px; margin-bottom: 8px; font-size: 0.9rem; color: #333; line-height: 1.4; }
         .check-list li::before { content: "✅"; position: absolute; left: 0; top: 0; font-size: 0.9rem; }
-        .sub-note { font-size: 0.75rem; color: #95a5a6; font-weight: normal; margin-left: 5px; }
 
         .version-tag { text-align: center; color: #aaa; font-size: 0.8rem; margin: 15px 0; }
         
@@ -97,8 +96,8 @@
 
 <div id="update-overlay" class="update-overlay" style="display: none;">
     <div class="update-box">
-        <h2>🚀 發現新版本 v1.0.7</h2>
-        <p>系統已升級：新增 MDRT 連續獎金及卓越顧問計算，並優化四大收入顯示框！</p>
+        <h2>🚀 發現新版本 v1.0.8</h2>
+        <p>系統已升級：保留被動收入專屬解說框，強化面試視覺效果！</p>
         <button id="force-update-btn" class="update-btn" onclick="forceUpdateApp()">立即更新</button>
     </div>
 </div>
@@ -147,11 +146,9 @@
             <div class="current-input-label" style="text-align: center;">✏️ 當前正在輸入：第 <span id="input-title-yr">1</span> 年業績</div>
 
             <div class="input-group"><label>🏥 醫療保險</label><input type="tel" id="in-med" placeholder="0" oninput="handleInput(this, 'med')"></div>
-            <!-- 危疾產品精簡，移除年期顯示 -->
             <div class="input-group"><label>🛡️ 危疾保險</label><input type="tel" id="in-ci" placeholder="0" oninput="handleInput(this, 'ci')"></div>
             <div class="input-group"><label>💰 儲蓄保險</label><input type="tel" id="in-sav" placeholder="0" oninput="handleInput(this, 'sav')"></div>
             
-            <!-- MDRT 額外獎金選項 -->
             <div class="checkbox-group" style="margin-top: 15px;">
                 <input type="checkbox" id="chk-continuous-mdrt">
                 <label for="chk-continuous-mdrt">🏅 達成連續 MDRT (額外花紅最高 6.5萬)</label>
@@ -161,14 +158,26 @@
                 <label for="chk-excellent-agent">💎 達成卓越顧問 (額外花紅 1.5萬)</label>
             </div>
 
-            <!-- 手動計算按鈕 -->
             <button type="button" class="calc-btn" onclick="runCalculation()">🧮 立即計算 / 更新結果</button>
         </div>
 
-        <!-- 全新：四大收入來源獨立框 -->
+        <!-- 應要求重現的被動收入解說框 -->
+        <div class="card" style="border: 2px solid var(--passive-gold);">
+            <h3>🌟 續保佣金 + 花紅 <span class="badge">被動收入</span></h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">保險業最吸引的「雪球效應」，隨年資增長產生幾何級複利：</p>
+            <div style="background: #fffbf0; padding: 15px; border-radius: 8px;">
+                <div class="res-row"><span>該年續保佣金：</span><span id="sel-rc">$0</span></div>
+                <div class="res-row passive"><span>該年續保花紅：</span><span id="sel-bonus">$0</span></div>
+                <div class="res-row highlight" style="color: var(--passive-gold); border-top: 1px solid #f39c12; padding-top: 10px;">
+                    <span>該年被動收入總計：</span><span id="sel-total">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 四大收入來源總結框 -->
         <div class="card pillar-card">
-            <h3>📈 該年四大收入來源 (第 <span id="pillar-title-yr">1</span> 年)</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">清晰拆解您的財富版圖，了解被動收入的威力：</p>
+            <h3>📈 該年四大收入來源總結 (第 <span id="pillar-title-yr">1</span> 年)</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">清晰拆解您的財富版圖：</p>
             
             <div class="pillar-row">
                 <span>1️⃣ 該年新單佣金 (FYC)</span>
@@ -187,7 +196,6 @@
                 <span id="p-rc">$0</span>
             </div>
             
-            <!-- 動態顯示當年的津貼支援 -->
             <div class="pillar-row" id="p-mb-row" style="color: #16a085; font-size: 0.95rem;">
                 <span>➕ 公司額外津貼 (MB) <small id="p-mb-note"></small></span>
                 <span id="p-mb">$0</span>
@@ -273,11 +281,11 @@
     </div>
 
     <!-- 版號顯示 -->
-    <div class="version-tag" id="app-version-display">版本號: v1.0.7</div>
+    <div class="version-tag" id="app-version-display">版本號: v1.0.8</div>
 </div>
 
 <script>
-    const APP_VERSION = "v1.0.7"; 
+    const APP_VERSION = "v1.0.8"; 
     document.getElementById('app-version-display').innerText = "版本號: " + APP_VERSION;
 
     function switchTab(tabId) {
@@ -324,7 +332,6 @@
         var mb = parseInt(mbAmountStr, 10) || 0;
         var reqHtml = '';
         
-        // 更改目標花紅位置顯示邏輯
         if(currentPackage === 'FP12') {
             reqHtml = `📌 目標該月佣金 (FYC)：<span class="income-highlight">$${(mb * 1.25).toLocaleString('en-US')}</span><br>
                        📌 實際該月總收入 (佣金+津貼)：<span class="income-highlight">$${(mb * 1.25 + mb).toLocaleString('en-US')}</span>`;
@@ -337,7 +344,6 @@
         document.getElementById('req-box').innerHTML = reqHtml;
     }
 
-    // 數據全域保留區，移除了 ci25
     var planDataInputs = [
         { med: 0, ci: 0, sav: 0, modified: false }, { med: 0, ci: 0, sav: 0, modified: false },
         { med: 0, ci: 0, sav: 0, modified: false }, { med: 0, ci: 0, sav: 0, modified: false },
@@ -413,10 +419,8 @@
             var y = i + 1; 
             var d = planDataInputs[i];
 
-            // 統一危疾佣金計算 (0.50)
             var fyc = (d.med * 0.25) + (d.ci * 0.50) + (d.sav * 0.25);
             
-            // 年終花紅 (YEB) - 需 FYC 達 128,000
             var yebRate = 0;
             if (fyc >= 391000) yebRate = 0.235;
             else if (fyc >= 275000) yebRate = 0.194;
@@ -427,31 +431,28 @@
             yearlyFYC[y] += fyc;
             yearlyYEB[y] += yeb; 
 
-            // 新增 MDRT 獎金計算邏輯
             var mdrtBonus = 0;
-            if (fyc >= 2656000) { // TOT
+            if (fyc >= 2656000) {
                 mdrtBonus = 120000 + (isContinuous ? 65000 : 0) + (isExcellent ? 15000 : 0);
-            } else if (fyc >= 1328000) { // COT
+            } else if (fyc >= 1328000) {
                 mdrtBonus = 60000 + (isContinuous ? 35000 : 0) + (isExcellent ? 15000 : 0);
-            } else if (fyc >= 391000) { // MDRT
+            } else if (fyc >= 391000) {
                 mdrtBonus = 30000 + (isContinuous ? 20000 : 0) + (isExcellent ? 15000 : 0);
             }
             yearlyMDRT[y] = mdrtBonus;
 
-            // MB Matching 邏輯
             if (currentPackage === 'FP12' && y === 1) { 
                 yearlyMB[y] = Math.min(mbAmount * 12, fyc / 1.25); 
             } else if (currentPackage === 'PA18') { 
                 if (y === 1) {
                     yearlyMB[y] = Math.min(mbAmount * 12, fyc / 1.5); 
                 } else if (y === 2) {
-                    yearlyMB[y] = Math.min(mbAmount * 6, fyc / 1.5); // 第2年最多派6個月
+                    yearlyMB[y] = Math.min(mbAmount * 6, fyc / 1.5); 
                 }
             } else if (currentPackage === 'TTFS' && y <= 3) { 
                 yearlyMB[y] = mbAmount * 12; 
             }
 
-            // 被動收入 (危疾續保率改為 0.10)
             var rcBase = (d.med * 0.20) + (d.ci * 0.10) + (d.sav * 0.05);
             var isElite = fyc >= 275000;
             var r2Rate = isElite ? 0.90 : 0.70;
@@ -468,7 +469,11 @@
             }
         }
 
-        // --- 四大收入來源畫面渲染 ---
+        // 把被動收入框的變數重新寫入
+        document.getElementById('sel-rc').innerText = format(yearlyRC[currentYear]);
+        document.getElementById('sel-bonus').innerText = format(yearlyBonus[currentYear]);
+        document.getElementById('sel-total').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
+
         document.getElementById('p-fyc').innerText = format(yearlyFYC[currentYear]);
         document.getElementById('p-rc').innerText = format(yearlyRC[currentYear] + yearlyBonus[currentYear]);
         document.getElementById('p-yeb').innerText = format(yearlyYEB[currentYear]);
@@ -499,7 +504,6 @@
         document.getElementById('cumulative-total').innerText = format(cumulativeTotal);
     }
 
-    // PWA 更新邏輯
     let newWorker;
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
