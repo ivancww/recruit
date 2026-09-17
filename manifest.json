@@ -1,11 +1,11 @@
 {
-  "name": "AIA 財富領袖系統",
-  "short_name": "財富領袖",
-  "description": "AIA 招募展示與收入計算機",
+  "name": "AVA Recruit",
+  "short_name": "AVA Recruit",
+  "description": "Career Discovery & Recruitment Conversation System",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f4f6f9",
-  "theme_color": "#d31145",
+  "background_color": "#f8fafc",
+  "theme_color": "#1e3a8a",
   "icons": [
     {
       "src": "icon-192.png",
