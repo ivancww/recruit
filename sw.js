@@ -1,7 +1,11 @@
-const CACHE_NAME = 'aia-pwa-cache-v1.0.9'; 
+const CACHE_NAME = 'ava-recruit-cache-v2.0.0';
 const urlsToCache = [
   './',
   './index.html',
+  './styles.css',
+  './app.js',
+  './recruit-content.js',
+  './recruit-engine.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
