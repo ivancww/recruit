@@ -76,4 +76,15 @@
   document.getElementById("unlockAdminButton").onclick=()=>{if(document.getElementById("adminCodeInput").value!=="8888"){toast("Access Code 不正確");return}document.getElementById("adminEditor").hidden=false;const a=read(KEYS.admin,{copy:"可能適合，亦可能唔適合。",version:C.version});document.getElementById("adminCopyInput").value=a.copy;document.getElementById("contentVersionInput").value=a.version};document.getElementById("saveAdminPreview").onclick=()=>{localStorage.setItem(KEYS.admin,JSON.stringify({copy:document.getElementById("adminCopyInput").value,version:document.getElementById("contentVersionInput").value}));toast("Admin 本機預覽已保存")};
   let worker;if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(reg=>reg.addEventListener("updatefound",()=>{worker=reg.installing;worker.addEventListener("statechange",()=>{if(worker.state==="installed"&&navigator.serviceWorker.controller)document.getElementById("updateBanner").hidden=false})})).catch(()=>{}));document.getElementById("updateButton").onclick=()=>worker&&worker.postMessage({action:"skipWaiting"});
   if(activeId){const found=sessions.find(s=>s.id===activeId);if(found)state=found}render();go("welcome");
+  const avaEntry=new URLSearchParams(window.location.search).get("avaEntry");
+  if(["frontend","user","admin"].includes(avaEntry)){
+    const returnButton=document.getElementById("avaReturnButton");
+    returnButton.hidden=false;
+    returnButton.href=avaEntry==="frontend"?"https://ivancww.github.io/avaplatform/":`https://ivancww.github.io/avaplatform/?avaSurface=${avaEntry}`;
+    if(avaEntry==="user") openDrawer("settingsDrawer");
+    if(avaEntry==="admin"){
+      document.querySelector('[data-settings-tab="admin"]').click();
+      openDrawer("settingsDrawer");
+    }
+  }
 })();
