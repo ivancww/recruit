@@ -52,6 +52,8 @@ test("guided flow reaches income result without console errors", async () => {
   await page.fill("#medInput", "600000");
   await page.click('[data-step="income-input"] [data-next]');
   assert.match(await page.locator("#incomeSummary").innerText(), /模擬總收入/);
+  fs.mkdirSync(path.join(root,"ui-snapshots"),{recursive:true});
+  await page.screenshot({path:path.join(root,"ui-snapshots","income-result-ipad-landscape.png"),fullPage:true});
   assert.equal(errors.length, 0, errors.join("\n"));
   await page.close();
 });
@@ -119,6 +121,8 @@ for (const viewport of [
     assert.equal(card.background,"rgb(255, 255, 255)");
     assert.equal(card.radius,"16px");
     assert.ok(card.width>280);
+    fs.mkdirSync(path.join(root,"ui-snapshots"),{recursive:true});
+    await page.screenshot({path:path.join(root,"ui-snapshots",`career-values-${viewport.name.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.png`),fullPage:true});
     for(let i=0;i<3;i++)await page.locator("#idealOptions .option").nth(i).click();
     const selected=await page.locator("#idealOptions .option[aria-pressed='true']").count();
     assert.equal(selected,3);
