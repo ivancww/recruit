@@ -1,0 +1,177 @@
+/*
+ * AVA Recruit Frontstage UI alignment
+ * Authority: ivancww/avaplatform/design-system/DESIGN-SYSTEM.md
+ * Canonical token source: design-system/tokens.css
+ * App-specific layout only; no package, calculation, permission or data logic.
+ */
+:root {
+  --ava-color-brand:#2563eb;
+  --ava-color-brand-soft:#eff6ff;
+  --ava-color-primary:#1e3a8a;
+  --ava-color-primary-hover:#172f70;
+  --ava-color-on-primary:#ffffff;
+  --ava-color-background:#f6f8fb;
+  --ava-color-surface:#ffffff;
+  --ava-color-text:#172033;
+  --ava-color-text-secondary:#475569;
+  --ava-color-text-muted:#64748b;
+  --ava-color-border:#e7ebf1;
+  --ava-color-control-border:#64748b;
+  --ava-color-selected:#eff6ff;
+  --ava-color-focus:#2563eb;
+  --ava-color-success:#059669;
+  --ava-color-danger:#dc2626;
+  --ava-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang HK","Noto Sans TC",sans-serif;
+  --ava-type-page:clamp(1.875rem,1.75rem + .5vw,2rem);
+  --ava-type-section:clamp(1.375rem,1.25rem + .5vw,1.4375rem);
+  --ava-type-card:1.0625rem;
+  --ava-type-body:1rem;
+  --ava-type-support:.875rem;
+  --ava-type-caption:.75rem;
+  --ava-type-button:1rem;
+  --ava-type-number:clamp(1.75rem,1.25rem + 2vw,2.5rem);
+  --ava-page-padding-inline:16px;
+  --ava-page-padding-block:22px;
+  --ava-gap-component:12px;
+  --ava-gap-section:28px;
+  --ava-card-padding:20px;
+  --ava-card-radius:16px;
+  --ava-control-radius:10px;
+  --ava-touch-target:44px;
+  --ava-content-width:1080px;
+  --ava-shadow-sm:0 1px 3px rgba(0,0,0,.04);
+  --ava-shadow-md:0 4px 16px -2px rgba(15,23,42,.06);
+  --brand:var(--ava-color-brand);
+  --navy:var(--ava-color-primary);
+  --soft:var(--ava-color-brand-soft);
+  --bg:var(--ava-color-background);
+  --surface:var(--ava-color-surface);
+  --text:var(--ava-color-text);
+  --sub:var(--ava-color-text-secondary);
+  --muted:var(--ava-color-text-muted);
+  --border:var(--ava-color-border);
+  --success:var(--ava-color-success);
+  --danger:var(--ava-color-danger);
+  --shadow:var(--ava-shadow-sm);
+  --radius:var(--ava-card-radius);
+}
+@media(min-width:651px){:root{--ava-page-padding-inline:24px;--ava-page-padding-block:28px}}
+@media(min-width:1001px){:root{--ava-page-padding-inline:42px;--ava-page-padding-block:34px}}
+.ava-front {
+  margin:0;min-height:100vh;min-height:100dvh;
+  background:var(--ava-color-background);color:var(--ava-color-text);
+  font:400 var(--ava-type-body)/1.6 var(--ava-font-family);
+}
+.ava-front [hidden]{display:none!important}
+.ava-front *,.ava-front *::before,.ava-front *::after{box-sizing:border-box}
+.ava-front button,.ava-front input,.ava-front textarea,.ava-front select{font-family:inherit}
+.ava-front button,.ava-front a,.ava-front input,.ava-front select,.ava-front textarea{touch-action:manipulation}
+.ava-front :where(button,a,input,textarea,select,summary,[tabindex]):focus-visible{
+  outline:2px solid var(--ava-color-focus);outline-offset:2px;
+}
+.app-header.ava-header{
+  position:sticky;top:0;z-index:100;min-height:unset;height:auto;
+  padding: max(12px,env(safe-area-inset-top,0px)) max(var(--ava-page-padding-inline),env(safe-area-inset-right,0px))
+  12px max(var(--ava-page-padding-inline),env(safe-area-inset-left,0px));
+  display:flex;flex-wrap:wrap;gap:12px;background:var(--ava-color-surface);
+  border-bottom:1px solid var(--ava-color-border);
+}
+.brand{flex:1 1 195px;min-width:0;gap:12px}
+.brand-mark{flex:0 0 44px;width:44px;height:44px;border-radius:var(--ava-control-radius)}
+.brand strong{font-size:1rem;line-height:1.3;overflow-wrap:anywhere}
+.brand small{font-size:var(--ava-type-caption);line-height:1.4;color:var(--ava-color-text-muted)}
+.header-actions{flex:0 1 auto;flex-wrap:wrap;justify-content:flex-end;gap:8px;min-width:0}
+.ava-front :where(.mode-button,.icon-button,.primary-button,.secondary-button,.danger-button,.text-button,.package-select){
+  border-radius:var(--ava-control-radius);min-height:var(--ava-touch-target);
+  font-size:var(--ava-type-button);font-weight:700;line-height:1.3;
+}
+.ava-front :where(.primary-button,.secondary-button,.danger-button){padding:8px 16px}
+.ava-front .primary-button{background:var(--ava-color-primary);color:var(--ava-color-on-primary)}
+.ava-front .secondary-button,.ava-front .mode-button,.ava-front .icon-button{background:var(--ava-color-surface);color:var(--ava-color-text-secondary);border:1px solid var(--ava-color-control-border)}
+.ava-front .danger-button{background:var(--ava-color-surface);color:var(--ava-color-danger);border:1px solid var(--ava-color-danger)}
+.ava-front .icon-button{display:inline-flex;align-items:center;justify-content:center;padding:8px;width:44px}
+.ava-return{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:8px;white-space:nowrap!important;max-width:none!important;padding:8px 16px!important;min-width:130px;text-decoration:none}
+.ava-icon{width:20px;height:20px;flex-shrink:0;display:inline-block}
+.ava-front :where(.primary-button,.secondary-button,.mode-button,.icon-button,.option,.choice-card,.package-select):disabled{
+  opacity:1;background:#e2e8f0;color:var(--ava-color-text-secondary);cursor:not-allowed;border-color:var(--ava-color-border);
+}
+@media(hover:hover) and (pointer:fine){
+ .ava-front .primary-button:hover:not(:disabled){background:var(--ava-color-primary-hover)}
+ .ava-front :where(.secondary-button,.mode-button,.icon-button,.option,.choice-card):hover:not(:disabled){background:var(--ava-color-brand-soft);border-color:var(--ava-color-brand)}
+}
+.progress{position:relative;top:auto;height:3px;z-index:1;background:var(--ava-color-border)}
+.progress div{height:100%;background:var(--ava-color-brand)}
+.flow-shell.ava-container{
+  width:100%;max-width:var(--ava-content-width);margin:0 auto;
+  padding:var(--ava-page-padding-block) max(var(--ava-page-padding-inline),env(safe-area-inset-right,0px))
+    max(var(--ava-page-padding-block),env(safe-area-inset-bottom,0px))
+    max(var(--ava-page-padding-inline),env(safe-area-inset-left,0px));
+}
+.hero-card,.question-card,.ava-front :where(.story-card,.method-card,.comparison-card,.path-card,.summary-card,.package-card,.prospect-card,.ladder-step,.recap-column,.career-column,.breakdown-item,.interview-question){
+  background:var(--ava-color-surface);color:var(--ava-color-text);
+  border:1px solid var(--ava-color-border);border-radius:var(--ava-card-radius);
+  box-shadow:var(--ava-shadow-sm);min-width:0;overflow-wrap:anywhere;
+}
+.hero-card,.question-card{padding:clamp(20px,3vw,32px)}
+.hero-card{min-height:clamp(380px,64vh,640px);background:var(--ava-color-surface);align-items:flex-start}
+.hero-card h1{font-size:var(--ava-type-page);font-weight:800;line-height:1.3;letter-spacing:normal;max-width:760px}
+.hero-card p,.question-card>p{font-size:var(--ava-type-support);line-height:1.55;color:var(--ava-color-text-secondary)}
+.question-card h2{font-size:var(--ava-type-page);line-height:1.3;font-weight:800;margin:8px 0 16px}
+.ava-front :where(.story-card,.method-card,.comparison-card,.path-card,.package-card,.prospect-card,.ladder-step,.recap-column,.career-column,.breakdown-item){padding:var(--ava-card-padding)}
+.ava-front :where(.story-card,.method-card,.comparison-card,.path-card,.package-card,.prospect-card,.ladder-step,.career-column) h3{font-size:var(--ava-type-card);font-weight:700;line-height:1.3}
+.ava-front :where(.eyebrow,.step-label){font-size:var(--ava-type-caption);color:var(--ava-color-brand);font-weight:700;letter-spacing:.04em}
+.page-control{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.page-control .secondary-button{flex:0 0 auto}
+.page-count{font-size:var(--ava-type-support);color:var(--ava-color-text-muted);font-variant-numeric:tabular-nums}
+.flow-actions--below{display:flex;justify-content:flex-end;margin-top:16px;border:0;padding:0}
+.flow-actions--below .primary-button{min-width:164px}
+.ava-front :where(.option,.choice-card){min-height:var(--ava-touch-target);border-radius:var(--ava-card-radius);background:#fff;border:1px solid var(--ava-color-border);font-size:var(--ava-type-body);color:var(--ava-color-text)}
+.ava-front :where(.option.selected,.choice-card.selected){background:var(--ava-color-selected);border:2px solid var(--ava-color-brand);box-shadow:none}
+.ava-front :where(.option,.choice-card)[aria-pressed="true"]::before{content:"✓";display:inline-block;margin-right:8px;color:var(--ava-color-primary);font-weight:900}
+.ava-front :where(.option-grid,.story-grid,.method-grid,.comparison-grid,.path-grid,.summary-grid,.package-grid,.prospect-grid,.career-comparison,.reflection-frame,.discovery-recap){gap:var(--ava-gap-component)}
+.ava-front :where(.field-grid input,.field-grid select,.sim-grid input,.sim-grid select,.salary-inputs input,.drawer input,.drawer select,.drawer textarea,.interview-question textarea,.question-card>textarea,.table-wrap input){
+ width:100%;min-width:0;min-height:var(--ava-touch-target);background:#fff;color:var(--ava-color-text);
+ border:1px solid var(--ava-color-control-border);border-radius:var(--ava-control-radius);
+ font-size:var(--ava-type-body);padding:8px 12px;line-height:1.55;
+}
+.ava-front :where(.interview-question textarea,.question-card>textarea){min-height:180px;resize:vertical}
+.ava-front :where(.field-grid label,.sim-grid label,.salary-inputs label,.drawer label,.interview-label){font-size:var(--ava-type-support);font-weight:600}
+.ava-front :where(.summary-card strong,.breakdown-item strong,.package-amount){font-variant-numeric:tabular-nums;font-size:var(--ava-type-number);color:var(--ava-color-primary);overflow-wrap:anywhere}
+.ava-front .summary-card strong{line-height:1.2}
+.ava-front .table-wrap{max-width:100%;overflow-x:auto}
+.ava-front .table-wrap:focus-visible{outline:2px solid var(--ava-color-focus);outline-offset:2px}
+.ava-front :where(.callout,.disclaimer,.availability-panel){border-radius:var(--ava-control-radius)}
+.ava-front .disclaimer{color:var(--ava-color-text-secondary);background:#f6f8fb}
+.ava-front .drawer{max-width:460px;padding:24px max(20px,env(safe-area-inset-right,0px));}
+.ava-front .drawer-backdrop{background:rgba(15,23,42,.6)}
+.ava-front .session-card{border:1px solid var(--ava-color-border);border-radius:var(--ava-card-radius)}
+.ava-front .journey-phase-item{font-size:var(--ava-type-support);border-color:var(--ava-color-border);color:var(--ava-color-text-secondary);background:#fff}
+.ava-front .journey-phase-item.current{background:var(--ava-color-selected);color:var(--ava-color-primary);border-color:var(--ava-color-brand)}
+/* Compact / unfolded / tablet match the canonical 650/1000px responsive boundaries. */
+@media(max-width:650px){
+ .app-header.ava-header{align-items:center}
+ .brand{flex:1 1 100%;gap:8px}
+ .brand>div{display:block}
+ .brand small{display:block}
+ .header-actions{width:100%;justify-content:flex-start;gap:8px}
+ .ava-return{margin-right:auto}
+ .ava-front .mode-button{max-width:none!important;font-size:var(--ava-type-support)}
+ .flow-shell.ava-container{padding-top:22px}
+ .hero-card,.question-card{padding:20px}
+ .hero-card{min-height:clamp(300px,64vh,550px)}
+ .hero-actions,.flow-actions{width:100%;align-items:stretch}
+ .flow-actions--below .primary-button{width:100%;min-width:0}
+ .ava-front :where(.option-grid,.story-grid,.method-grid,.comparison-grid,.path-grid,.summary-grid,.package-grid,.prospect-grid,.career-comparison,.reflection-frame,.field-grid,.sim-grid,.salary-inputs,.two-sides,.discovery-recap,.breakdown-grid){grid-template-columns:minmax(0,1fr)}
+ .ava-front .drawer{max-width:none;width:100%;padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
+ .ava-front .journey-phase-item{font-size:11px}
+}
+@media(min-width:651px) and (max-width:1000px){
+ .ava-front :where(.option-grid,.story-grid,.method-grid,.comparison-grid,.path-grid,.summary-grid,.package-grid,.prospect-grid,.career-comparison,.reflection-frame,.discovery-recap,.breakdown-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ava-front .package-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:1001px){
+ .ava-front .package-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ .ava-front *{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
