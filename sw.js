@@ -5,7 +5,7 @@ const SHELL_CACHE = "ava-recruit-shell";
 const SHELL_FILES = new Set([
   "", "index.html", "styles.css", "ava-recruit-ui.css",
   "design-system/tokens.css", "design-system/components.css",
-  "app.js", "recruit-content.js", "recruit-engine.js", "recruit-cloud.js", "recruit-user-edit.js", "recruit-admin.js",
+  "app.js", "recruit-content.js", "recruit-engine.js", "recruit-cloud.js", "recruit-user-edit.js", "recruit-admin.js", "recruit-releases.js", "releases.json",
   "manifest.json", "icon-192.png", "icon-512.png"
 ]);
 const scopeURL = new URL(self.registration.scope);
