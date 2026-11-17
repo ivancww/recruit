@@ -5,6 +5,7 @@ on:
       - '*.js'
       - '*.html'
       - '*.css'
+      - 'gas/**'
       - 'design-system/**'
       - 'tests/**'
       - '.github/workflows/recruit-checks.yml'
@@ -27,7 +28,7 @@ jobs:
           node --check recruit-content.js
           node --check recruit-engine.js
       - name: Regression suite
-        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js
+        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js tests/recruit-gas.test.js
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
