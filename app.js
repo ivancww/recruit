@@ -2,14 +2,19 @@
   "use strict";
   const C = window.RECRUIT_CONTENT, E = window.RecruitEngine;
   const KEYS = { sessions: "ava:recruit:sessions:v2", active: "ava:recruit:active-session:v2", settings: "ava:recruit:user-settings:v2", admin: "ava:recruit:admin-preview:v2" };
-  const steps = ["welcome","ideal","rank","employment","current","tradeoff","discovery-recap","industry-prospects","industry","ava-method","career-ladder","career-tradeoff","path-choice","paths","income-intro","package-guide","income-input","income-result","career-compare","reflection","complete"];
+  const steps = ["welcome","ideal","rank","why-three","employment","satisfaction","stay-reason","change-interest","desired-work","financial-work","financial-tradeoff","discovery-recap","industry-prospects","industry","ava-method","career-ladder","career-tradeoff","path-choice","paths","income-intro","package-guide","income-input","income-result","career-compare","reflection","complete"];
   const pages = {
     welcome:`<div class="hero-card"><span class="eyebrow">CAREER DISCOVERY</span><h1>先了解你想要嘅工作，<br>再了解保險業。</h1><p>呢個流程唔係要證明你適合。可能適合，亦可能唔適合；重點係將工作內容、可能得到嘅嘢同需要承擔嘅代價一齊看清楚。</p><div class="hero-actions"><button class="primary-button" data-next>開始探索</button><button class="secondary-button" id="resumeButton" hidden>繼續上次進度</button></div></div>`,
     ideal:q("01 · 我的理想工作","如果唔考慮工種，你理想中一份工作最重要係啲乜？","先揀最重要 3 項。選項只係幫你表達自己，冇標準答案。",`<div class="option-grid" id="idealOptions"></div><div class="selection-status" id="idealStatus">已選 0／3</div>`,true,"排列 Top 3"),
-    rank:q("01 · 排列優先次序","將三項排成你心目中嘅 Top 1、Top 2、Top 3","點選兩項可以交換位置。",`<div id="rankList" class="rank-list"></div>`,false,"建立「我的理想工作」"),
+    rank:q("01 · 排列優先次序","將三項排成你心目中嘅 Top 1、Top 2、Top 3","點選兩項可以交換位置。",`<div id="rankList" class="rank-list"></div>`,false,"解釋點解重要"),
     employment:q("02 · 現時工作","你而家有冇一份主要工作？","",`<div class="single-options" id="employmentOptions"><button class="choice-card" data-value="employed">有，目前有主要工作</button><button class="choice-card" data-value="not-employed">暫時冇／情況不同</button></div>`,true,"繼續"),
-    current:q("02 · 現時工作","你而家份工作，最珍惜佢畀到你啲乜？","只揀 Top 3。完成之前，我哋唔急住談代價。",`<div class="option-grid" id="currentOptions"></div><div class="selection-status" id="currentStatus">已選 0／3</div>`,true,"看看另一面"),
-    tradeoff:q("03 · Trade-off Reveal","每一份工作都有佢畀到我哋嘅嘢","好多時，我哋得到一樣嘢，同時亦會用另一樣嘢交換。逐張點擊，睇埋完整一面。",`<div class="reveal-grid" id="tradeoffCards"></div>`,false,"整理職業探索結果"),
+    "why-three":q("01 · 最重要嘅三點","點解你揀呢三樣？","逐項講吓原因，等我哋真正了解對你嚟講有乜意義。",`<div id="whyThreeFields" class="interview-questions"></div>`,false,"了解現職情況",true),
+    satisfaction:q("02 · 現時工作","而家份工，能唔能夠滿足你呢三個要求？","逐項睇吓現況，唔係為你評分。",`<div id="satisfactionFields" class="interview-questions"></div>`,false,"點解仍然做呢份工？",true),
+    "stay-reason":q("02 · 現時工作","點解你依然選擇做呢份工？","即使未能完全滿足，可能都有其他值得保留嘅原因。",`<label class="interview-label" for="stayReasonInput">主要原因（可留空，面談討論）</label><textarea id="stayReasonInput" rows="4" maxlength="800" placeholder="例如收入穩定、家庭責任、同事、暫時未有其他機會……"></textarea>`,false,"探索改變意願",true),
+    "change-interest":q("03 · 轉變意願","如果有工作更接近呢三點，你會唔會想了解？","唔需要即刻決定轉工，冇標準答案。",`<div class="single-options" id="interestOptions"><button class="choice-card" data-value="yes">想，願意了解新機會</button><button class="choice-card" data-value="maybe">未決定，想了解多啲</button><button class="choice-card" data-value="no">暫時唔想轉變</button></div>`,true,"想像理想工作"),
+    "desired-work":q("03 · 理想工作","真係搵嘅話，邊種類型嘅工作最吸引你？","由你想要嘅工作出發，唔預設理財行業一定適合。",`<div class="single-options" id="desiredOptions"><button class="choice-card" data-value="employee">受僱工作，制度及職責清晰</button><button class="choice-card" data-value="professional">專業顧問，以知識服務客戶</button><button class="choice-card" data-value="business">自主經營，建立個人事業</button><button class="choice-card" data-value="flexible">工作時間較靈活，逐步發展</button><button class="choice-card" data-value="unsure">仲未有特定方向</button></div><label class="interview-label" for="desiredDetailInput">你心目中嘅工作（可選填）</label><textarea id="desiredDetailInput" rows="3" maxlength="600" placeholder="例如想去邊個行業、想有乜唔同……"></textarea>`,false,"了解理財策劃工作",true),
+    "financial-work":q("04 · 理財策劃工作","理財策劃工作，實際上係做乜？","認識工作內容後，再判斷有冇機會符合你嘅三項要求。",`<div class="prospect-grid"><article class="prospect-card"><h3>了解客戶</h3><p>聆聽人生目標、家庭需要及現有財務保障。</p></article><article class="prospect-card"><h3>分析及規劃</h3><p>理解醫療、危疾、儲蓄及退休需要，按規定提供合適方案。</p></article><article class="prospect-card"><h3>長期服務</h3><p>定期保障檢視、跟進變化、協助索償及維繫關係。</p></article></div><p class="disclaimer">工作亦涉及主動開拓客戶、專業學習、合規要求同不穩定收入。</p>`,false,"睇得到同付出",true),
+    "financial-tradeoff":q("04 · 理財工作嘅取捨","可能得到啲乜？又需要付出啲乜？","同樣用「得到 × 代價」去了解理財工作，不預設你一定適合。",`<div id="firstCareerTradeoffs" class="comparison-grid"></div><p class="disclaimer">你可以選擇繼續了解，亦可以維持現況，唔需要作招聘承諾。</p>`,false,"整理探索結果",true),
     "discovery-recap":q("第一階段 · 職業探索","先整理你想要嘅工作，再了解另一個選擇","你所重視嘅價值，會係接落嚟判斷理財策劃工作係咪適合自己嘅參考，而唔係由 App 幫你評分。",`<div class="discovery-journey" aria-label="職業探索流程"><div class="discovery-node">理想工作<span>選出你最重視嘅三項</span></div><div class="discovery-node">現時工作<span>你已經擁有啲乜</span></div><div class="discovery-node">取捨分析<span>得到同代價一齊睇</span></div></div><div id="discoveryRecap" class="discovery-recap"></div><p class="disclaimer">冇適合與否嘅自動結論。下一階段係認識理財策劃行業，而唔係要求你立即轉工。</p>`,false,"了解理財策劃行業前景",true),
     "industry-prospects":q("第二階段 · 行業前景","理財策劃，點解有長期發展空間？","由客戶人生需要、專業角色同事業累積角度理解行業；以下係工作模式分析，唔係市場增長或收入保證。",`<div class="prospect-grid"><article class="prospect-card"><span class="step-label">01 · NEEDS</span><h3>人生不同階段，都有唔同需要</h3><p>由個人保障、家庭、教育、醫療，到退休同企業風險，需求會隨人生階段改變。</p></article><article class="prospect-card"><span class="step-label">02 · SERVICE</span><h3>一次投保以外，仲有持續服務</h3><p>保障檢視、情況改變、索償支援同退休規劃，帶來持續與客戶溝通嘅工作機會。</p></article><article class="prospect-card"><span class="step-label">03 · SKILLS</span><h3>專業能力可以逐步累積</h3><p>產品理解、風險分析、客戶溝通、轉介服務與團隊合作，都需要時間建立。</p></article></div><div class="prospect-caution"><strong>發展空間 ≠ 保證成功</strong><p>客戶開拓、合規、持續學習、收入波動及個人投入，都係必須一併了解嘅現實。</p></div>`,false,"了解實際理財業務",true),
     industry:q("04 · 真正了解保險業","保險工作，實際服務緊邊啲需要？","工作唔只係介紹一種產品，而係理解個人、家庭、生活及企業面對嘅不同風險。個別產品／服務能否正式提供，仍以公司最新制度及 Admin 核實內容為準。",`<div class="story-grid" id="industryGroups"></div><h3>人生同需要會一路改變</h3><div class="journey" id="lifeJourney"></div><p class="callout">有保單 ≠ 所有需要都已經處理好。專業工作係了解現況 → Review → 分析 → 發現需要 → 呈現差距，再由客戶自己決定。</p>`,false,"睇 AVA 工作方法",true),
@@ -30,22 +35,26 @@
   const shell=document.getElementById("flowShell"); shell.innerHTML=`<div id="journeyPhase" class="journey-phase" aria-label="招聘探索階段"></div>`+steps.map(s=>`<section class="flow-page" data-step="${s}">${pages[s]}</section>`).join("");
   let sessions=read(KEYS.sessions,[]), activeId=localStorage.getItem(KEYS.active), mode="recruiter", step="welcome", rankPick=null, result=null;
   let state=fresh();
-  function fresh(){return {id:`candidate-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name:"Candidate",updatedAt:new Date().toISOString(),step:"welcome",ideal:[],employment:"",current:[],path:"",availability:{},income:{packageId:"PA18",mbAmount:10000,years:Array.from({length:7},()=>({med:0,ci:0,sav:0})),continuousMdrt:false,excellentAgent:false},salary:{monthly:0,growth:0,bonus:0},reflection:[]}}
+  function fresh(){return {id:`candidate-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name:"Candidate",updatedAt:new Date().toISOString(),step:"welcome",ideal:[],employment:"",current:[],reasons:{},satisfaction:{},stayReason:"",changeInterest:"",desiredType:"",desiredDetail:"",path:"",availability:{},income:{packageId:"PA18",mbAmount:10000,years:Array.from({length:7},()=>({med:0,ci:0,sav:0})),continuousMdrt:false,excellentAgent:false},salary:{monthly:0,growth:0,bonus:0},reflection:[]}}
   function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
   function save(show=false){state.step=step;state.updatedAt=new Date().toISOString();const at=sessions.findIndex(s=>s.id===state.id);if(at>=0)sessions[at]=state;else sessions.unshift(state);localStorage.setItem(KEYS.sessions,JSON.stringify(sessions));localStorage.setItem(KEYS.active,state.id);activeId=state.id;if(show)toast("進度已保存喺呢部裝置")}
   function escape(s){const d=document.createElement("div");d.textContent=String(s??"");return d.innerHTML}
   function money(n){return "$"+Math.round(Number(n)||0).toLocaleString("en-US")}
   function go(target){if(!steps.includes(target))return;step=target;const phase=document.getElementById("journeyPhase");const phaseIndex=steps.indexOf(step)<steps.indexOf("industry-prospects")?0:steps.indexOf(step)<steps.indexOf("income-intro")?1:2;phase.hidden=step==="welcome"||step==="complete";phase.innerHTML=["職業探索","行業前景／職級","方案及收入"].map((name,i)=>`<span class="journey-phase-item${i===phaseIndex?" current":""}${i<phaseIndex?" finished":""}"${i===phaseIndex?' aria-current="step"':""}>${i+1}. ${name}</span>`).join("");document.querySelectorAll(".flow-page").forEach(p=>p.classList.toggle("active",p.dataset.step===step));document.getElementById("progressFill").style.width=`${Math.max(0,steps.indexOf(step))/(steps.length-2)*100}%`;render();save();window.scrollTo({top:0,behavior:"smooth"})}
-  function next(){let i=steps.indexOf(step);if(step==="employment"&&state.employment!=="employed")i=steps.indexOf("tradeoff")-1;if(step==="income-input")compute();go(steps[Math.min(i+1,steps.length-1)])}
-  function back(){let i=steps.indexOf(step);if(step==="tradeoff"&&state.employment!=="employed")i=steps.indexOf("employment")+1;go(steps[Math.max(i-1,0)])}
+  function next(){let i=steps.indexOf(step);if(step==="employment"&&state.employment!=="employed")i=steps.indexOf("change-interest")-1;if(step==="income-input")compute();go(steps[Math.min(i+1,steps.length-1)])}
+  function back(){let i=steps.indexOf(step);if(step==="change-interest"&&state.employment!=="employed")i=steps.indexOf("employment")+1;go(steps[Math.max(i-1,0)])}
   function optionButtons(items,selected){return items.map(x=>`<button class="option${selected.includes(x)?" selected":""}" data-value="${escape(x)}">${escape(x)}</button>`).join("")}
   function render(){
     if(step==="welcome"){const b=document.getElementById("resumeButton");b.hidden=!activeId;b.onclick=()=>{const s=sessions.find(x=>x.id===activeId);if(s){state=s;go(s.step==="complete"?"reflection":s.step)}}}
     if(step==="ideal")renderMulti("idealOptions",C.idealValues,state.ideal,"idealStatus");
     if(step==="rank"){document.getElementById("rankList").innerHTML=state.ideal.map((x,i)=>`<button class="rank-item${rankPick===i?" selected":""}" data-rank="${i}"><span class="rank-number">Top ${i+1}</span><strong>${escape(x)}</strong></button>`).join("")}
     if(step==="employment")renderSingle("employmentOptions",state.employment);
-    if(step==="current")renderMulti("currentOptions",C.currentValues,state.current,"currentStatus");
-    if(step==="tradeoff"){const values=state.current.length?state.current:state.ideal;document.getElementById("tradeoffCards").innerHTML=values.map(x=>{const t=C.tradeoffs[x]||["呢項價值對你有實際意義。","維持任何工作價值，都需要相應投入及限制。"] ;return `<article class="reveal-card"><button><strong>你得到的是：${escape(x)}</strong><p>${escape(t[0])}</p><small>點擊 Reveal</small></button><div class="tradeoff"><strong>背後可能伴隨的是：</strong><p>${escape(t[1])}</p></div></article>`}).join("")}
+    if(step==="why-three")renderWhyThree();
+    if(step==="satisfaction")renderSatisfaction();
+    if(step==="stay-reason")bindInterviewText("stayReasonInput","stayReason");
+    if(step==="change-interest")renderInterviewSingle("interestOptions","changeInterest");
+    if(step==="desired-work"){renderInterviewSingle("desiredOptions","desiredType");bindInterviewText("desiredDetailInput","desiredDetail");}
+    if(step==="financial-tradeoff")document.getElementById("firstCareerTradeoffs").innerHTML=C.careerTradeoffs.map(([title,gain,cost])=>`<article class="comparison-card"><h3>${escape(title)}</h3><p class="gain"><strong>可能得到：</strong>${escape(gain)}</p><p class="cost"><strong>需要付出：</strong>${escape(cost)}</p></article>`).join("");
     if(step==="industry"){document.getElementById("industryGroups").innerHTML=C.industryGroups.map(g=>`<article class="story-card"><h3>${g.title}</h3><ul>${g.items.map(x=>`<li>${x}</li>`).join("")}</ul></article>`).join("");document.getElementById("lifeJourney").innerHTML=C.lifeJourney.map(x=>`<span>${x}</span>`).join("")}
     if(step==="ava-method")document.getElementById("methodCards").innerHTML=C.avaMethods.map(x=>`<article class="method-card"><h3>${x.title}</h3><p>${x.text}</p><a href="${x.url}" target="_blank" rel="noopener">開啟獨立 AVA Module ↗</a></article>`).join("");
     if(step==="career-tradeoff")document.getElementById("careerTradeoffs").innerHTML=C.careerTradeoffs.map(x=>`<article class="comparison-card"><h3>${x[0]}</h3><p class="gain"><strong>可能得到：</strong><br>${x[1]}</p><p class="cost"><strong>需要承擔：</strong><br>${x[2]}</p></article>`).join("");
@@ -61,6 +70,30 @@
   }
   function renderMulti(id,items,selected,statusId){const box=document.getElementById(id);box.innerHTML=optionButtons(items,selected);document.getElementById(statusId).textContent=`已選 ${selected.length}／3`;document.querySelector(`[data-step="${step}"] [data-next]`).disabled=selected.length!==3;box.querySelectorAll(".option").forEach(b=>b.onclick=()=>{const v=b.dataset.value,i=selected.indexOf(v);if(i>=0)selected.splice(i,1);else if(selected.length<3)selected.push(v);render();save()})}
   function renderSingle(id,value){const box=document.getElementById(id);box.querySelectorAll("[data-value]").forEach(b=>{b.classList.toggle("selected",b.dataset.value===value);b.onclick=()=>{if(id==="employmentOptions")state.employment=b.dataset.value;else state.path=b.dataset.value;render();save()}});document.querySelector(`[data-step="${step}"] [data-next]`).disabled=!value}
+  function renderWhyThree(){
+    state.reasons ||= {};
+    const box=document.getElementById("whyThreeFields");
+    box.innerHTML=state.ideal.map((v,i)=>`<div class="interview-question"><h3>Top ${i+1} · ${escape(v)}</h3><label for="reasonInput${i}">點解呢點對你最重要？</label><textarea id="reasonInput${i}" data-reason-index="${i}" rows="3" maxlength="600" placeholder="可以喺面談時再補充"></textarea></div>`).join("");
+    box.querySelectorAll("[data-reason-index]").forEach(el=>{const v=state.ideal[Number(el.dataset.reasonIndex)];el.value=state.reasons[v]||"";el.oninput=()=>{state.reasons[v]=el.value;save()};});
+  }
+  function renderSatisfaction(){
+    state.satisfaction ||= {};
+    const box=document.getElementById("satisfactionFields");
+    const options=[["yes","能夠滿足"],["partial","部分滿足"],["no","未能滿足"],["unsure","未確定"]];
+    box.innerHTML=state.ideal.map((v,i)=>`<fieldset class="interview-question"><legend>Top ${i+1} · ${escape(v)}</legend><p>${escape(state.reasons?.[v]||"你可以根據實際工作情況選擇。")}</p><div class="satisfaction-options">${options.map(([id,label])=>`<label><input type="radio" name="satisfaction${i}" value="${id}" data-satisfaction-index="${i}" ${state.satisfaction[v]===id?"checked":""}><span>${label}</span></label>`).join("")}</div></fieldset>`).join("");
+    const next=document.querySelector('[data-step="satisfaction"] [data-next]');
+    const validate=()=>{next.disabled=state.ideal.some(v=>!state.satisfaction[v])};
+    box.querySelectorAll("[data-satisfaction-index]").forEach(el=>el.onchange=()=>{state.satisfaction[state.ideal[Number(el.dataset.satisfactionIndex)]]=el.value;validate();save()});
+    validate();
+  }
+  function bindInterviewText(id,key){
+    const el=document.getElementById(id);el.value=state[key]||"";el.oninput=()=>{state[key]=el.value;save()};
+  }
+  function renderInterviewSingle(id,key){
+    const box=document.getElementById(id);
+    box.querySelectorAll("[data-value]").forEach(button=>{const selected=state[key]===button.dataset.value;button.classList.toggle("selected",selected);button.setAttribute("aria-pressed",String(selected));button.onclick=()=>{state[key]=button.dataset.value;renderInterviewSingle(id,key);save()};});
+    if(step==="change-interest")document.querySelector('[data-step="change-interest"] [data-next]').disabled=!state[key];
+  }
   function renderPaths(){document.getElementById("pathCards").innerHTML=Object.entries(C.paths).map(([id,p])=>`<article class="path-card${state.path===id?" active":""}"><h3>${p.title}</h3><p>${p.intro}</p><div class="two-sides"><div><strong>可能得到</strong><ul>${p.gets.map(x=>`<li>${x}</li>`).join("")}</ul></div><div><strong>需要交換</strong><ul>${p.costs.map(x=>`<li>${x}</li>`).join("")}</ul></div></div><button class="secondary-button full" data-path-switch="${id}">查看呢條 Path</button></article>`).join("");const panel=document.getElementById("availabilityPanel");panel.hidden=state.path==="fulltime";["hours","evening","weekend","constraint"].forEach(k=>{const el=document.getElementById(k+"Input");if(el){el.value=state.availability[k]||"";el.onchange=()=>{state.availability[k]=el.value;save()}}})}
   function renderPackageGuide(){
     const box=document.getElementById("packageCards");
