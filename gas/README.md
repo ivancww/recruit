@@ -1,57 +1,48 @@
-# AVA Recruit 專用 GAS（待部署）
+# AVA Recruit 獨立 GAS｜資料及安全部署說明
 
-## 對應資料來源
-- 新建中文 Google Sheet： https://docs.google.com/spreadsheets/d/13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30/edit
-- App 原始碼：`ivancww/recruit`，現有 Draft PR #3
-- 系統代號：`recruit`
+**Owner 目前使用嘅 GAS 已部署唯讀 v1**；倉庫 `gas/Code.gs` 現有新增 Admin 功能係**待部署候選源碼**，不能當成現有正式 GAS 已具備 Admin 權限。
+
+- Sheet： https://docs.google.com/spreadsheets/d/13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30/edit
+- 現有 GAS `/exec`： https://script.google.com/macros/s/AKfycbzgUnyK9bVOovaj7C5tk4MZXIlTOOnv-Dq4f6KLvk-dWkmk66KkR-yJSVpyyTDAcjUIHA/exec
+- App Repo： `ivancww/recruit`；獨立版本候選 `v2.1.2`
 - 資料協議：`recruit-dataset-v1`
-- 使用繁體中文分頁名、欄位名和展示資料。方案識別代碼 FP12／PA18／TTFS 為既有技術契約，不可直接翻譯成其他 ID。
 
-## Owner 提供的正式連結（2026-11-17）
+## API（只有一個有效 doGet 與 doPost）
 
-- GAS Web App：`https://script.google.com/macros/s/AKfycbzgUnyK9bVOovaj7C5tk4MZXIlTOOnv-Dq4f6KLvk-dWkmk66KkR-yJSVpyyTDAcjUIHA/exec`
-- 直接測試 GET：在網址後加入 `?action=health`、`?action=catalog` 或 `?action=financial`。
-- 對應 Google Sheet：`https://docs.google.com/spreadsheets/d/13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30/edit`
-- 資料表已確認 21 個繁體中文分頁，與 `recruitDiagnostic` 白名單相符。
-- **驗證狀態：BLOCKED**。目前外部瀏覽工具無法存取 `script.google.com`，未能核實正式 GAS 回應、部署權限、Google Redirect 或 source/deployment equivalence；不能把部署 URL 視為正式讀取成功。
-- **現有 App 仍使用本地內容及引擎**；不要因為已登記 URL 而啟用跨域讀取或宣稱已同步。
-- 正式環境需取得 URL 的 `health` 和 `catalog` 回應，以及確認 `PUBLIC_CONTENT_ENABLED`／`PUBLIC_FINANCIAL_ENABLED` 指令碼屬性值，才可決定下一階段接駁。
+| 操作 | 方法 | 安全約束 |
+|---|---|---|
+| `health` | GET | 僅回傳唯讀狀態及公開讀取標誌，不披露 Sheet |
+| `catalog` | GET | `PUBLIC_CONTENT_ENABLED=true` 才讀招聘內容 11 個指定分頁 |
+| `financial` | GET | `PUBLIC_FINANCIAL_ENABLED=true` 且 content 開啟，才容許讀取財務分頁 |
+| `exchangeAdminSession` | POST | Platform 驗證一次性 ticket、nonce、browser proof；不能使用本機密碼 |
+| `adminRead` | POST | 須持有 Platform 簽發、尚未過期且 appId=recruit 之証明，GAS 每次 Server-to-Server 驗證 |
+| `adminUpdate` | POST | Server 驗證授權、文字欄位白名單、穩定「紀錄代碼」、預期「修訂版」；寫入鎖＋ flush＋精確讀回，失敗嘗試回滾 |
+| 其他 POST | POST | 拒絕 |
 
-## GAS 程式架構
-- `Code.gs`：**只有一個有效 `doGet` 及 `doPost`**。
-- `GET?action=health`：只回報唯讀狀態，不回傳工作表內容。
-- `GET?action=catalog`：在明確開啟 `PUBLIC_CONTENT_ENABLED=true` 後只讀十一個白名單招聘流程分頁。
-- `GET?action=financial`：同時要求 `PUBLIC_CONTENT_ENABLED=true` 和 `PUBLIC_FINANCIAL_ENABLED=true`；才讀招聘方案、津貼及六個財務參數分頁。
-- `POST`：全部拒絕；**未實作** `ava-admin-session-v1`，不允許用網址、前端密碼或查詢參數代替 AVA Studio 授權。
-- 永不讀取「試算輸入」、「七年收入試算」、「使用說明」、「參考資料及版本」或任何求職者私人資料。
+**管理頁：** 11 個招聘內容分頁＋6 個方案及財務參數分頁，共 17 個中文分類。受保護資格、津貼、佣金、計算及工作價值原始標籤全部只讀。只有 `探索提問`、`理財工作內容`、`理財工作取捨`、`行業前景`、`保障服務範疇`、`職涯發展`、`發展方式` 的批准文字欄位可寫。
 
-## GAS 正式設定（必須由擁有者操作）
-1. 已有 Owner 提供的獨立 GAS Web App 網址。先進入該 GAS 專案核實部署版本及編輯器原始碼是否與此倉庫 `gas/Code.gs` 完全一致；不可直接覆蓋現有程式。
-2. 若 GAS 原始碼未更新，透過正式專案編輯器以版本管理方式更新，並確認 `gas/appsscript.json` 內 V8、香港時區及唯讀試算表 scope。不要覆蓋其他 App 的 GAS。
-3. 在「專案設定 → 指令碼屬性」設定：
-   - `PUBLIC_CONTENT_ENABLED=false`（預設不公開）
-   - `PUBLIC_FINANCIAL_ENABLED=false`（未核實財務條款不可公開）
-   - `OFFICIAL_DATA_VERSION=待核實`
-4. 在編輯器手動執行 `recruitDiagnostic()`，按 Google 官方授權流程授權唯讀存取，確認 `passes:true` 及二十一個分頁無缺漏。檢查執行記錄。
-5. 先用受限制的測試部署測試 `health`、未知 action、`catalog` 拒絕、`financial` 拒絕及所有 POST 拒絕。不要直接公開部署。
-6. 正式招聘文案獲批准後，可以明確開啟 `PUBLIC_CONTENT_ENABLED=true`；財務相關值須完成公司條款／資料來源核對、合規檢查及 Product Owner 授權，先考慮開啟 `PUBLIC_FINANCIAL_ENABLED=true`。
-7. 若需要由 GitHub Pages 前端直接讀 GAS，必須實測 ContentService Redirect、CORS／跨域、PWA 快取和資料版本；**不能**因為 GET 測試成功就認定瀏覽器已整合。未測試前，App 繼續使用現有本地資料和計算引擎，不進行假連線或無聲 fallback 改官方參數。
+## Owner 上線前必要步驟
 
-## 資料更新政策
-- Sheet 係候選的獨立官方資料來源，**尚未**成為 App 已部署之 Official Layer。
-- 調整 Sheet 數據不等於更新正在執行的 Recruit Engine；需要資料契約驗證、版本記錄和計算對照，禁止靜默重寫公式、招聘資格、津貼或佣金。
-- 現有 Sheet 所列資格、津貼及獎勵只係原 App 的示範數據，已標示「待官方核實」，不得自稱 AIA 官方現行條款。
-- 候選人 Top 3、原因、轉工意向等私人回答保存在設備本機；此 GAS 沒有寫入求職者資料的 endpoint。
+1. 進入**現有** GAS 專案（上述 `/exec` 對應嘅 Script Project），先備份現有 `Code.gs`，記錄原本部署版本及 Script Properties 名稱；不要建立第二個 Recruit GAS 或刪除任何原來服務。
+2. 將經 PR 審核的 `gas/Code.gs` 複製到同一專案；按 `gas/appsscript.json` 使用 V8、`Asia/Hong_Kong`、`spreadsheets` 及 `script.external_request` scopes，完成 Google 官方重新授權。
+3. 專案設定 → Script Properties 設定以下**屬性名稱**：
+   - `AVA_PLATFORM_ADMIN_ENDPOINT` = **AVA Platform 現行正式 GAS `/exec`**（必須核實，唔可以指向 Recruit 自己）
+   - `PUBLIC_CONTENT_ENABLED` = `true`（Owner 已驗證招聘內容 GET，按公開範圍保留）
+   - `PUBLIC_FINANCIAL_ENABLED` = `false`（未驗證公司條款，不開放公開財務讀取）
+   - `OFFICIAL_DATA_VERSION` = `v1.0.0` 或最新正式資料版本（只代表資料版本，與 Shell 版本分開）
+4. 手動執行 `recruitDiagnostic()`，確認 21 個中文分頁無缺漏；再檢查所有 17 個候選 Admin 分頁均已有「紀錄代碼／修訂版」且無重複、無錯位。
+5. 為**現有** GAS 部署建立新的不可變版本；修改同一個部署，保留原有 `/exec` URL。
+6. 先核對 `health`、`catalog`、`financial`、未知 action；確保舊功能無回歸。用匿名 POST 嘗試 `adminRead`／`adminUpdate` 必須拒絕且 Sheet 無任何修改。
+7. AVA Platform GAS 須由 Owner 核實 `AVA_ADMIN_APP_IDS` 確實包含 `recruit`，而 App 在 AVA Studio 經一次登入、一次性 ticket、nonce、browser proof、session exchange、授權讀取、授權寫入、logout/revoke 後確實失效。此前 Platform Registry **不能**宣告 `admin:true`。
+8. 使用一筆事先指定、可回復的非財務文字資料，在完全授權的前提下測試 Official Write、修訂版 +1、相同資料 read-after-write，再還原；嚴格確認失敗時沒有誤報已保存。
+9. 使用 GitHub Pages 正式 App 於 iPad、HONOR Magic V5 展開、瀏覽器及 PWA 測試；GAS ContentService 可能遇到 Redirect/CORS，不能用直接開啟 GET 的成功代替 App 讀取成功。
 
-## Mother Standard 實施闸口
-| 驗收項目 | 狀態 |
-|---|---|
-| GAS 程式源碼／分頁白名單／JSON 資料契約 | 已加入 PR，待測試 |
-| Sheet 分頁名稱與內容 | 已由 Google Sheets 讀取驗證 |
-| GAS 專案建立及 Google 授權 | 尚未執行 |
-| 真正 GAS 部署版本及 URL | 尚未執行 |
-| `doGet`／`doPost` 線上真實路由 | 尚未執行 |
-| AVA Studio 一次性授權票據、服務端核實、重播防護 | 未實作，寫入封鎖 |
-| 跨域 App 實機讀取、更新／User Layer 保存 | 尚未執行 |
+## 絕對不能做
 
-沒有完成所有對應 Gate 之前，唔可以將 Recruit GAS 或 Platform Admin 能力標記為「已正式整合」。
+- 未登入 AVA Studio 直接使用 `?avaEntry=admin`、從網址複製 ticket、GAS direct URL 或瀏覽器存放密碼取得 Admin 權限。
+- 將 `AVA_PLATFORM_ADMIN_ENDPOINT`、管理證明、正式 Script Property 值或敏感 Token 發布在前端或 Repo。
+- User Edit 修改 Official 層、計算引擎、招聘方案資格和財務計算。
+- 當 GAS 模擬測試通過就聲稱 production write 已持久化。
+- 未完成獨立 App、GAS、Admin 實機驗證就將 Recruit 加入 Platform 的 Front／User／Admin Registry。
+
+詳細驗收見 `docs/INTEGRATION-VERIFICATION.md`。
