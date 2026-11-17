@@ -66,3 +66,67 @@ for (const viewport of [{ name: "iPhone", width: 390, height: 844 }, { name: "Fo
     await page.close();
   });
 }
+
+for (const viewport of [
+  {name:"Phone",width:390,height:844},
+  {name:"Foldable unfolded",width:717,height:768},
+  {name:"iPad portrait",width:768,height:1024},
+  {name:"iPad landscape",width:1024,height:768}
+]){
+  test(`canonical AVA presentation primitives at ${viewport.name}`,async()=>{
+    if (!browserAvailable) return test.skip("Playwright Chromium executable unavailable");
+    const page=await browser.newPage({viewport});
+    const errors=[];
+    page.on("pageerror",e=>errors.push(e.message));
+    await page.goto(baseUrl);
+    const shell=await page.evaluate(()=>{
+      const root=getComputedStyle(document.documentElement);
+      const body=getComputedStyle(document.body);
+      const header=getComputedStyle(document.querySelector(".app-header"));
+      const returnButton=document.getElementById("avaReturnButton");
+      const control=getComputedStyle(returnButton);
+      return {
+        background:body.backgroundColor,
+        text:body.color,
+        font:body.fontFamily,
+        officialBackground:root.getPropertyValue("--ava-color-background").trim(),
+        officialText:root.getPropertyValue("--ava-color-text").trim(),
+        header:header.backgroundColor,
+        returnHeight:returnButton.getBoundingClientRect().height,
+        returnWidth:returnButton.getBoundingClientRect().width,
+        returnVisible:returnButton.getBoundingClientRect().width>0,
+        returnLabel:returnButton.innerText.trim(),
+        returnFocus:control.outlineStyle,
+        scroll:document.documentElement.scrollWidth,
+        client:document.documentElement.clientWidth
+      };
+    });
+    assert.equal(shell.officialBackground,"#f6f8fb");
+    assert.equal(shell.officialText,"#172033");
+    assert.equal(shell.background,"rgb(246, 248, 251)");
+    assert.equal(shell.text,"rgb(23, 32, 51)");
+    assert.match(shell.font,/PingFang HK/);
+    assert.equal(shell.header,"rgb(255, 255, 255)");
+    assert.ok(shell.returnHeight>=44,`Return to AVA touch height: ${shell.returnHeight}`);
+    assert.ok(shell.returnWidth>=44);
+    assert.ok(shell.returnVisible);
+    assert.match(shell.returnLabel,/返回 AVA/);
+    assert.ok(shell.scroll<=shell.client,`shell overflow ${shell.scroll} > ${shell.client}`);
+    await page.click('[data-step="welcome"] [data-next]');
+    const card=await page.locator('[data-step="ideal"] .question-card').evaluate(el=>{
+      const css=getComputedStyle(el);return{background:css.backgroundColor,radius:css.borderTopLeftRadius,width:el.getBoundingClientRect().width};
+    });
+    assert.equal(card.background,"rgb(255, 255, 255)");
+    assert.equal(card.radius,"16px");
+    assert.ok(card.width>280);
+    for(let i=0;i<3;i++)await page.locator("#idealOptions .option").nth(i).click();
+    const selected=await page.locator("#idealOptions .option[aria-pressed='true']").count();
+    assert.equal(selected,3);
+    await page.click('[data-step="ideal"] [data-next]');
+    assert.ok(await page.locator("#whyThreeFields textarea").count()===3);
+    const dimensions=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
+    assert.ok(dimensions.scroll<=dimensions.client,`interactive overflow ${dimensions.scroll} > ${dimensions.client}`);
+    assert.deepEqual(errors,[]);
+    await page.close();
+  });
+}
