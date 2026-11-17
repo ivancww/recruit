@@ -52,8 +52,10 @@ test('single effective GET and POST handlers; no changes to Recruit Engine',()=>
   assert.equal((script.match(/function doGet\(/g)||[]).length,1);
   assert.equal((script.match(/function doPost\(/g)||[]).length,1);
   assert.equal(manifest.runtimeVersion,'V8');
-  assert.deepEqual(manifest.oauthScopes,['https://www.googleapis.com/auth/spreadsheets.readonly']);
-  assert.doesNotMatch(script,/setValue\(|appendRow\(|deleteSheet\(|setValues\(/);
+  assert.deepEqual(manifest.oauthScopes,['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/script.external_request']);
+  assert.match(script,/function recruitVerifyAdmin_\(/);
+  assert.match(script,/function recruitAdminUpdate_\(/);
+  assert.doesNotMatch(script,/appendRow\(|deleteSheet\(|setValues\(/);
 });
 test('default GET is fail-closed and reveals no Google Sheet',()=>{
   const ctx=make();
@@ -119,4 +121,17 @@ test('Owner deployment settings are registered but never silently enable unverif
   assert.equal(deployment.runtimeIntegrationEnabled,false);
   assert.equal(deployment.officialReadEnabled,false);
   assert.equal(deployment.financialReadEnabled,false);
+});
+
+test('all protected POST routes reject missing browser proof or Platform authorization',()=>{
+ const ctx=make();
+ const send=body=>JSON.parse(ctx.sandbox.doPost({postData:{contents:JSON.stringify(body)}}).body);
+ const cases=[
+  {action:'exchangeAdminSession',appId:'recruit',launchTicket:'spoofed',launchNonce:'nonce'},
+  {action:'adminRead',appId:'recruit',adminSessionProof:'made-up'},
+  {action:'adminUpdate',appId:'recruit',adminSessionProof:'made-up',
+   tab:'理財工作取捨',recordId:'07-0001',expectedRevision:1,fields:{'可能得到':'非法改寫'}}
+ ];
+ for(const request of cases){const result=send(request);assert.equal(result.ok,false);}
+ assert.equal(ctx.getOpens(),0);
 });
