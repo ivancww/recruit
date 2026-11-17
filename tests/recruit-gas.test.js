@@ -3,28 +3,51 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
-const script = fs.readFileSync(path.resolve(__dirname, '../gas/Code.gs'),'utf8');
+const script = fs.readFileSync(path.resolve(__dirname,'../gas/Code.gs'),'utf8');
 const manifest = require('../gas/appsscript.json');
-const make = ({properties={}, data={}}={}) => {
+
+function make({properties={},data={}}={}) {
   let sheetReads=0,openCount=0;
   const sandbox={
-    console:{error:()=>{},log:()=>{}},
-    ContentService:{MimeType:{JSON:'application/json'},createTextOutput(text){return{body:text,setMimeType(mime){this.mime=mime;return this}}}},
-    PropertiesService:{getScriptProperties(){return{getProperty(key){return properties[key]||null}}}},
-    SpreadsheetApp:{openById(id){openCount++;assert.equal(id,'13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30');return{
-      getSheetByName(name){if(!(name in data))return null;return{
-        getLastRow(){return data[name].length},
-        getLastColumn(){return data[name][0].length},
-        getRange(){sheetReads++;return{getValues(){return data[name]}}}
-      }},
-      getSheets(){return Object.keys(data).map(name=>({getName:()=>name}))}
-    }}}},
+    console:{error(){},log(){}},
+    ContentService:{
+      MimeType:{JSON:'application/json'},
+      createTextOutput(body){
+        return {body,setMimeType(mime){this.mime=mime;return this}};
+      }
+    },
+    PropertiesService:{
+      getScriptProperties(){
+        return {getProperty(key){return properties[key]||null}};
+      }
+    },
+    SpreadsheetApp:{
+      openById(id){
+        openCount++;
+        assert.equal(id,'13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30');
+        return {
+          getSheetByName(name){
+            if (!(name in data)) return null;
+            return {
+              getLastRow(){return data[name].length},
+              getLastColumn(){return data[name][0].length},
+              getRange(){
+                sheetReads++;
+                return {getValues(){return data[name]}};
+              }
+            };
+          },
+          getSheets(){return Object.keys(data).map(name=>({getName:()=>name}))}
+        };
+      }
+    },
     Utilities:{formatDate:()=> '2026-11-17'}
   };
   vm.createContext(sandbox);
   vm.runInContext(script,sandbox);
-  return {sandbox,getReads:()=>sheetReads,getOpens:()=>openCount,reply:(action)=>JSON.parse(sandbox.doGet({parameter:{action}}).body)};
-};
+  return {sandbox,getReads:()=>sheetReads,getOpens:()=>openCount,
+    reply:(action)=>JSON.parse(sandbox.doGet({parameter:{action}}).body)};
+}
 test('single effective GET and POST handlers; no changes to Recruit Engine',()=>{
   assert.equal((script.match(/function doGet\(/g)||[]).length,1);
   assert.equal((script.match(/function doPost\(/g)||[]).length,1);
