@@ -5,6 +5,7 @@ on:
       - '*.js'
       - '*.html'
       - '*.css'
+      - 'design-system/**'
       - 'tests/**'
       - '.github/workflows/recruit-checks.yml'
   push:
@@ -27,3 +28,17 @@ jobs:
           node --check recruit-engine.js
       - name: Regression suite
         run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test tooling
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Browser rendered responsive and journey smoke
+        run: node --test tests/ui-smoke.test.js
