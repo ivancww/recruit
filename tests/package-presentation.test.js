@@ -42,7 +42,7 @@ test("career exploration completes before financial planning prospects and rank 
   const match=app.match(/const steps = \[([^\]]+)\]/);
   assert.ok(match);
   const steps=Array.from(match[1].matchAll(/"([^"]+)"/g),x=>x[1]);
-  assert.ok(steps.indexOf("tradeoff") < steps.indexOf("discovery-recap"));
+  assert.ok(steps.indexOf("financial-tradeoff") < steps.indexOf("discovery-recap"));
   assert.ok(steps.indexOf("discovery-recap") < steps.indexOf("industry-prospects"));
   assert.ok(steps.indexOf("industry-prospects") < steps.indexOf("career-ladder"));
   assert.ok(steps.indexOf("career-ladder") < steps.indexOf("package-guide"));
@@ -54,4 +54,27 @@ test("three-phase rail tracks career discovery, prospects and packages", () => {
   assert.match(app,/id="journeyPhase"/);
   assert.match(app,/aria-current="step"/);
   assert.match(app,/職業探索","行業前景／職級","方案及收入/);
+});
+
+test("career discovery uses exactly ten values, Top 3 reasons and fit assessment", () => {
+  const values=content.match(/idealValues: Object.freeze\(\[([^\]]+)\]\)/);
+  assert.ok(values);
+  assert.equal(Array.from(values[1].matchAll(/"([^"]+)"/g)).length,10);
+  const stepList=app.match(/const steps = \[([^\]]+)\]/)[1];
+  const steps=Array.from(stepList.matchAll(/"([^"]+)"/g),m=>m[1]);
+  const required=["ideal","rank","why-three","employment","satisfaction","stay-reason","change-interest","desired-work","financial-work","financial-tradeoff","discovery-recap"];
+  for(let i=1;i<required.length;i++)assert.ok(steps.indexOf(required[i-1])<steps.indexOf(required[i]));
+  assert.match(app,/state\.reasons\[v\]/);
+  assert.match(app,/state\.satisfaction\[v\]/);
+  assert.match(app,/function renderWhyThree\(/);
+  assert.match(app,/function renderSatisfaction\(/);
+  assert.match(app,/function renderInterviewSingle\(/);
+  assert.match(app,/function renderDiscoveryRecap\(/);
+  assert.match(app,/點解你依然選擇做呢份工/);
+});
+test("non-employed respondents skip current-job questions without losing Top 3",()=>{
+  assert.match(app,/step==="employment"&&state\.employment!=="employed"/);
+  assert.match(app,/steps\.indexOf\("change-interest"\)-1/);
+  assert.match(app,/step==="change-interest"&&state\.employment!=="employed"/);
+  assert.match(app,/state\.ideal\.map/);
 });
