@@ -1,0 +1,29 @@
+name: Recruit checks
+on:
+  pull_request:
+    paths:
+      - '*.js'
+      - '*.html'
+      - '*.css'
+      - 'tests/**'
+      - '.github/workflows/recruit-checks.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: |
+          node --check app.js
+          node --check recruit-content.js
+          node --check recruit-engine.js
+      - name: Regression suite
+        run: node --test tests/*.test.js
