@@ -134,3 +134,41 @@ for (const viewport of [
     await page.close();
   });
 }
+
+test("User Edit is the actual Frontstage, stages Preview and commits one local Save",async()=>{
+ if(!browserAvailable) return test.skip("Playwright Chromium executable is not installed");
+ const page=await browser.newPage({viewport:{width:768,height:1024}});
+ const errors=[];page.on("pageerror",error=>errors.push(error.message));
+ await page.goto(baseUrl+"/index.html?avaEntry=user");
+ assert.equal(await page.locator(".recruit-user-edit-toolbar").isVisible(),true);
+ await page.click('[data-step="welcome"] [data-next]');
+ const title=page.locator('[data-step="ideal"] .question-card h2');
+ const original=await title.innerText();
+ await title.fill("我最重視嘅三項工作價值");
+ await page.click("#recruitEditToggle");
+ assert.equal(await title.innerText(),"我最重視嘅三項工作價值");
+ assert.equal(await title.getAttribute("contenteditable"),"false");
+ await page.click("#recruitEditToggle");
+ await page.click("#recruitEditSave");
+ await page.reload();
+ await page.click('[data-step="welcome"] [data-next]');
+ assert.equal(await page.locator('[data-step="ideal"] .question-card h2').innerText(),"我最重視嘅三項工作價值");
+ await page.goto(baseUrl+"/index.html?avaEntry=frontend");
+ await page.click('[data-step="welcome"] [data-next]');
+ assert.equal(await page.locator('[data-step="ideal"] .question-card h2').innerText(),"我最重視嘅三項工作價值");
+ assert.notEqual(original,"我最重視嘅三項工作價值");
+ assert.deepEqual(errors,[]);
+ await page.close();
+});
+
+test("Direct Admin URL cannot unlock local preview or protected official dataset",async()=>{
+ if(!browserAvailable) return test.skip("Playwright Chromium executable is not installed");
+ const page=await browser.newPage({viewport:{width:1024,height:768}});
+ await page.goto(baseUrl+"/index.html?avaEntry=admin");
+ await page.click("#settingsButton");
+ assert.equal(await page.locator('[data-settings-tab="admin"]').isVisible(),false);
+ assert.equal(await page.locator("#adminEditor").isVisible(),false);
+ const local=await page.evaluate(()=>Object.keys(localStorage).filter(x=>x.includes("admin")));
+ assert.deepEqual(local,[]);
+ await page.close();
+});
