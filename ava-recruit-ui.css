@@ -195,3 +195,20 @@
 .recruit-admin-save:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:650px){.recruit-admin-workspace{margin:8px auto;padding:12px}
  .recruit-admin-record{grid-template-columns:minmax(0,1fr);padding:12px}}
+
+/* App-owned update history and required newer Shell notification. */
+.recruit-release-history-button{margin-left:10px;background:transparent;color:var(--ava-color-primary,#1e3a8a);
+ border:1px solid var(--ava-color-border,#d9e2ee);border-radius:8px;padding:8px 10px;font:inherit;min-height:44px}
+.recruit-release-overlay[hidden]{display:none!important}
+.recruit-release-overlay{position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.58);
+ display:flex;align-items:center;justify-content:center;padding:16px max(16px,env(safe-area-inset-right)) 16px max(16px,env(safe-area-inset-left))}
+.recruit-release-dialog{width:min(560px,100%);max-height:calc(100dvh - 45px);
+ overflow-y:auto;background:var(--ava-color-surface,#fff);border-radius:var(--ava-radius-lg,16px);
+ padding:22px;box-shadow:0 12px 36px rgba(15,23,42,.22)}
+.recruit-release-dialog h2{font-size:clamp(1.1rem,2vw,1.45rem);margin:0 0 14px}
+.recruit-release-dialog ul{padding-left:1.4rem;margin:0 0 20px}
+.recruit-release-dialog li{margin:8px 0;font-size:14px;line-height:1.6}
+#recruitReleaseButtons{display:flex;flex-wrap:wrap;gap:10px}
+#recruitReleaseButtons button{min-height:44px;padding:10px 14px;border:1px solid var(--ava-color-border,#cbd5e1);
+ border-radius:10px;background:var(--ava-color-primary,#1e3a8a);color:#fff;font:inherit;cursor:pointer}
+#recruitReleaseButtons button:nth-child(2){background:var(--ava-color-surface,#fff);color:var(--ava-color-text,#142034)}
