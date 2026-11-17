@@ -40,6 +40,6 @@ test("read-only, same UI, no writes and financial Engine unchanged",()=>{
  assert.match(app,/E\.calculate\(state\.income\)/);
  assert.doesNotMatch(cloud.load.toString(),/POST|PUT|PATCH|DELETE/);
  assert.match(content,/version: "v2\.1\.2"/);
- assert.match(html,/v2\.1\.1/);
+ assert.match(html,/v2\.1\.2/);
  assert.match(fs.readFileSync(require("node:path").join(__dirname,"../sw.js"),"utf8"),/recruit-cloud\.js/);
 });
