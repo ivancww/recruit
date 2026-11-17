@@ -151,6 +151,13 @@
   }
   if(activeId){const found=sessions.find(s=>s.id===activeId);if(found)state=found}render();go("welcome");
   const avaEntry=new URLSearchParams(window.location.search).get("avaEntry");
+  if(window.RecruitReleases){
+    window.RecruitReleases.create({
+      window,document,storage:localStorage,
+      currentVersion:C.version,
+      getEditor:()=>userEditor
+    });
+  }
   // Cloud data may refresh presentation text only; it never changes Engine,
   // protected package rules, candidate answers, local overrides or the UI shell.
   if (window.RecruitCloud && typeof window.RecruitCloud.load === "function") {
