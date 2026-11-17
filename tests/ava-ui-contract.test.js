@@ -65,3 +65,11 @@ test("PWA owns its shell and never purges other applications",()=>{
  assert.match(sw,/design-system\/components\.css/);
  assert.doesNotMatch(sw,/cache-v\d/);
 });
+
+test("all navigation affordances use canonical outlined SVG icons",()=>{
+  assert.match(html,/id="sessionsButton"[^>]*><svg class="ava-icon"/);
+  assert.match(html,/id="settingsButton"[^>]*><svg class="ava-icon"/);
+  assert.match(html,/drawer-close" aria-label="關閉"><svg class="ava-icon"/);
+  assert.doesNotMatch(html,/aria-label="設定">⚙/);
+  assert.doesNotMatch(html,/aria-label="候選人進度">☰/);
+});
