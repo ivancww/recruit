@@ -109,3 +109,14 @@ test('diagnostic verifies 21 expected Chinese tab names',()=>{
  assert.equal(diag.passes,true);
  assert.equal(diag.actualCount,21);
 });
+
+test('Owner deployment settings are registered but never silently enable unverified cloud reads',()=>{
+  const deployment=require('../gas/deployment.json');
+  assert.equal(deployment.appId,'recruit');
+  assert.equal(deployment.contractVersion,'recruit-dataset-v1');
+  assert.equal(deployment.sheetUrl,'https://docs.google.com/spreadsheets/d/13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30/edit');
+  assert.equal(deployment.gasWebAppUrl,'https://script.google.com/macros/s/AKfycbzgUnyK9bVOovaj7C5tk4MZXIlTOOnv-Dq4f6KLvk-dWkmk66KkR-yJSVpyyTDAcjUIHA/exec');
+  assert.equal(deployment.runtimeIntegrationEnabled,false);
+  assert.equal(deployment.officialReadEnabled,false);
+  assert.equal(deployment.financialReadEnabled,false);
+});
