@@ -168,3 +168,30 @@
  .recruit-user-edit-toolbar strong,.recruit-user-edit-toolbar span{width:100%}
  .recruit-user-edit-toolbar button{flex:1 1 auto}
 }
+
+/* App-owned AVA Studio Admin, visible only after server-backed authorization. */
+.recruit-admin-workspace{max-width:1120px;margin:24px auto;padding:16px;min-height:60vh;color:var(--ava-color-text,#142034)}
+.recruit-admin-head{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.recruit-admin-head h1{font-size:clamp(1.2rem,2vw,1.7rem);margin:0}
+.recruit-admin-head p{margin:0;font-size:13px}
+.recruit-admin-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;max-width:100%;
+ padding:12px 0;border-bottom:1px solid var(--ava-color-border,#d9e2ee)}
+.recruit-admin-tabs button{flex:0 0 auto;min-height:44px;border:1px solid var(--ava-color-border,#d9e2ee);
+ background:var(--ava-color-surface,#fff);color:inherit;border-radius:10px;padding:8px 14px;font:inherit}
+.recruit-admin-tabs button[aria-selected="true"]{background:var(--ava-color-primary,#1e3a8a);color:#fff;font-weight:600}
+.recruit-admin-content{padding:16px 0;display:flex;flex-direction:column;gap:18px}
+.recruit-admin-content label{display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:600}
+.recruit-admin-content select,.recruit-admin-record textarea,.recruit-admin-record input{
+ width:100%;max-width:100%;min-height:44px;padding:10px 12px;font:inherit;font-size:15px;
+ border:1px solid var(--ava-color-border,#d9e2ee);border-radius:10px;
+ color:var(--ava-color-text,#142034);background:var(--ava-color-surface,#fff)}
+.recruit-admin-record{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
+ background:var(--ava-color-surface,#fff);border:1px solid var(--ava-color-border,#d9e2ee);
+ border-radius:var(--ava-radius-lg,14px);padding:18px}
+.recruit-admin-record p{grid-column:1/-1;margin:0;font-size:13px}
+.recruit-admin-record [readonly]{opacity:.78;background:var(--ava-color-surface-subtle,#f6f8fc)}
+.recruit-admin-save{grid-column:1/-1;min-height:44px;padding:10px 14px;font:inherit;border:0;
+ border-radius:10px;background:var(--ava-color-primary,#1e3a8a);color:#fff;cursor:pointer}
+.recruit-admin-save:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:650px){.recruit-admin-workspace{margin:8px auto;padding:12px}
+ .recruit-admin-record{grid-template-columns:minmax(0,1fr);padding:12px}}
