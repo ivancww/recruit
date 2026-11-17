@@ -35,7 +35,6 @@ test("guided flow reaches income result without console errors", async () => {
   await page.click('[data-step="welcome"] [data-next]');
   for (let i = 0; i < 3; i += 1) await page.locator("#idealOptions .option").nth(i).click();
   await page.click('[data-step="ideal"] [data-next]');
-  await page.click('[data-step="rank"] [data-next]');
   await page.fill("#reasonInput0","重視收入");
   await page.click('[data-step="why-three"] [data-next]');
   await page.click('#employmentOptions [data-value="not-employed"]');
