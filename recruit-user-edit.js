@@ -76,7 +76,7 @@
         const step = node.dataset.step, target = locate(step);
         if (!target) return;
         capture(step,target);
-        const row = ((enabled && !preview) ? staged : saved)[step] || {};
+        const row = (enabled ? staged : saved)[step] || {};
         if (target.title) target.title.textContent = row.title === undefined ? original[step].title : row.title;
         if (target.support) {
           target.support.textContent = row.support === undefined ? original[step].support : row.support;
