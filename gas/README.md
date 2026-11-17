@@ -7,6 +7,16 @@
 - 資料協議：`recruit-dataset-v1`
 - 使用繁體中文分頁名、欄位名和展示資料。方案識別代碼 FP12／PA18／TTFS 為既有技術契約，不可直接翻譯成其他 ID。
 
+## Owner 提供的正式連結（2026-11-17）
+
+- GAS Web App：`https://script.google.com/macros/s/AKfycbzgUnyK9bVOovaj7C5tk4MZXIlTOOnv-Dq4f6KLvk-dWkmk66KkR-yJSVpyyTDAcjUIHA/exec`
+- 直接測試 GET：在網址後加入 `?action=health`、`?action=catalog` 或 `?action=financial`。
+- 對應 Google Sheet：`https://docs.google.com/spreadsheets/d/13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30/edit`
+- 資料表已確認 21 個繁體中文分頁，與 `recruitDiagnostic` 白名單相符。
+- **驗證狀態：BLOCKED**。目前外部瀏覽工具無法存取 `script.google.com`，未能核實正式 GAS 回應、部署權限、Google Redirect 或 source/deployment equivalence；不能把部署 URL 視為正式讀取成功。
+- **現有 App 仍使用本地內容及引擎**；不要因為已登記 URL 而啟用跨域讀取或宣稱已同步。
+- 正式環境需取得 URL 的 `health` 和 `catalog` 回應，以及確認 `PUBLIC_CONTENT_ENABLED`／`PUBLIC_FINANCIAL_ENABLED` 指令碼屬性值，才可決定下一階段接駁。
+
 ## GAS 程式架構
 - `Code.gs`：**只有一個有效 `doGet` 及 `doPost`**。
 - `GET?action=health`：只回報唯讀狀態，不回傳工作表內容。
@@ -16,8 +26,8 @@
 - 永不讀取「試算輸入」、「七年收入試算」、「使用說明」、「參考資料及版本」或任何求職者私人資料。
 
 ## GAS 正式設定（必須由擁有者操作）
-1. 開啟上方 Google Sheet，選擇「擴充功能 → Apps Script」，建立**綁定此 Sheet 的獨立 GAS 專案**。
-2. 複製 `gas/Code.gs` 到 GAS 編輯器的 `Code.gs`；項目設定使用 `gas/appsscript.json` 內 V8、香港時區及唯讀試算表 scope。**不要覆蓋任何已存在的正式 GAS 專案。**
+1. 已有 Owner 提供的獨立 GAS Web App 網址。先進入該 GAS 專案核實部署版本及編輯器原始碼是否與此倉庫 `gas/Code.gs` 完全一致；不可直接覆蓋現有程式。
+2. 若 GAS 原始碼未更新，透過正式專案編輯器以版本管理方式更新，並確認 `gas/appsscript.json` 內 V8、香港時區及唯讀試算表 scope。不要覆蓋其他 App 的 GAS。
 3. 在「專案設定 → 指令碼屬性」設定：
    - `PUBLIC_CONTENT_ENABLED=false`（預設不公開）
    - `PUBLIC_FINANCIAL_ENABLED=false`（未核實財務條款不可公開）
