@@ -1,6 +1,8 @@
 (function () {
   "use strict";
   const C = window.RECRUIT_CONTENT, E = window.RecruitEngine;
+  let cloudCatalog = null;
+  let cloudStatus = "pending";
   const KEYS = { sessions: "ava:recruit:sessions:v2", active: "ava:recruit:active-session:v2", settings: "ava:recruit:user-settings:v2", admin: "ava:recruit:admin-preview:v2" };
   const steps = ["welcome","ideal","why-three","employment","satisfaction","stay-reason","desired-work","change-interest","financial-work","financial-tradeoff","discovery-recap","industry-prospects","industry","ava-method","career-ladder","career-tradeoff","path-choice","paths","income-intro","package-guide","income-input","income-result","career-compare","reflection","complete"];
   const pages = {
@@ -45,14 +47,14 @@
   function optionButtons(items,selected){return items.map(x=>`<button class="option${selected.includes(x)?" selected":""}" data-value="${escape(x)}" aria-pressed="${selected.includes(x)}">${escape(x)}</button>`).join("")}
   function render(){
     if(step==="welcome"){const b=document.getElementById("resumeButton");b.hidden=!activeId;b.onclick=()=>{const s=sessions.find(x=>x.id===activeId);if(s){state=s;go(s.step==="complete"?"reflection":s.step)}}}
-    if(step==="ideal")renderMulti("idealOptions",C.idealValues,state.ideal,"idealStatus");
+    if(step==="ideal")renderMulti("idealOptions",cloudCatalog ? cloudCatalog.idealValues : C.idealValues,state.ideal,"idealStatus");
     if(step==="employment")renderSingle("employmentOptions",state.employment);
     if(step==="why-three")renderWhyThree();
     if(step==="satisfaction")renderSatisfaction();
     if(step==="stay-reason")bindInterviewText("stayReasonInput","stayReason");
     if(step==="change-interest")renderInterviewSingle("interestOptions","changeInterest");
     if(step==="desired-work"){renderInterviewSingle("desiredOptions","desiredType");bindInterviewText("desiredDetailInput","desiredDetail");}
-    if(step==="financial-tradeoff")document.getElementById("firstCareerTradeoffs").innerHTML=C.careerTradeoffs.map(([title,gain,cost])=>`<article class="comparison-card"><h3>${escape(title)}</h3><p class="gain"><strong>可能得到：</strong>${escape(gain)}</p><p class="cost"><strong>需要付出：</strong>${escape(cost)}</p></article>`).join("");
+    if(step==="financial-tradeoff")document.getElementById("firstCareerTradeoffs").innerHTML=(cloudCatalog ? cloudCatalog.careerTradeoffs : C.careerTradeoffs).map(([title,gain,cost])=>`<article class="comparison-card"><h3>${escape(title)}</h3><p class="gain"><strong>可能得到：</strong>${escape(gain)}</p><p class="cost"><strong>需要付出：</strong>${escape(cost)}</p></article>`).join("");
     if(step==="industry"){document.getElementById("industryGroups").innerHTML=C.industryGroups.map(g=>`<article class="story-card"><h3>${g.title}</h3><ul>${g.items.map(x=>`<li>${x}</li>`).join("")}</ul></article>`).join("");document.getElementById("lifeJourney").innerHTML=C.lifeJourney.map(x=>`<span>${x}</span>`).join("")}
     if(step==="ava-method")document.getElementById("methodCards").innerHTML=C.avaMethods.map(x=>`<article class="method-card"><h3>${x.title}</h3><p>${x.text}</p><a href="${x.url}" target="_blank" rel="noopener">開啟獨立 AVA Module ↗</a></article>`).join("");
     if(step==="career-tradeoff")document.getElementById("careerTradeoffs").innerHTML=C.careerTradeoffs.map(x=>`<article class="comparison-card"><h3>${x[0]}</h3><p class="gain"><strong>可能得到：</strong><br>${x[1]}</p><p class="cost"><strong>需要承擔：</strong><br>${x[2]}</p></article>`).join("");
@@ -136,6 +138,20 @@
   let worker;if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(reg=>reg.addEventListener("updatefound",()=>{worker=reg.installing;worker.addEventListener("statechange",()=>{if(worker.state==="installed"&&navigator.serviceWorker.controller)document.getElementById("updateBanner").hidden=false})})).catch(()=>{}));document.getElementById("updateButton").onclick=()=>worker&&worker.postMessage({action:"skipWaiting"});
   if(activeId){const found=sessions.find(s=>s.id===activeId);if(found)state=found}render();go("welcome");
   const avaEntry=new URLSearchParams(window.location.search).get("avaEntry");
+  // Cloud data may refresh presentation text only; it never changes Engine,
+  // protected package rules, candidate answers, local overrides or the UI shell.
+  if (window.RecruitCloud && typeof window.RecruitCloud.load === "function") {
+    window.RecruitCloud.load(C).then(snapshot => {
+      cloudStatus = snapshot.state;
+      if (snapshot.state === "ready") {
+        cloudCatalog = snapshot.data;
+        if (step === "ideal" || step === "financial-tradeoff") render();
+      }
+      // Do not show a false "cloud synced" badge while CORS or live data
+      // verification remains blocked. Status is for non-visual diagnostics.
+      window.RECRUIT_CLOUD_STATUS = cloudStatus;
+    }).catch(() => { window.RECRUIT_CLOUD_STATUS = "unavailable"; });
+  }
   if(["frontend","user","admin"].includes(avaEntry)){
     const returnButton=document.getElementById("avaReturnButton");
     returnButton.hidden=false;
