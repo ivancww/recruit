@@ -44,12 +44,12 @@ test('Official Write must confirm record ID, revision, persisted fields and read
  }
 });
 test('Copied URL, expired window.name and mismatched app binding always reject',async()=>{
- await assert.rejects(admin.browserBinding('ticket','nonce',{name:'',opener:null}),/AVA Studio/);
+ assert.throws(()=>admin.browserBinding('ticket','nonce',{name:'',opener:null}),/AVA Studio/);
  const fake={type:'ava-admin-session-context',appId:'other',
   launchTicket:'ticket',launchNonce:'nonce',browserProof:'x',
   expiresAt:future(),contract:'ava-admin-session-v1'};
  const win={name:'ava-admin-session-v1:'+JSON.stringify(fake),opener:null};
- await assert.rejects(admin.browserBinding('ticket','nonce',win),/過期或不相符/);
+ assert.throws(()=>admin.browserBinding('ticket','nonce',win),/過期或不相符/);
  assert.equal(win.name,'');
 });
 test('independent shell loads Admin module but never trusts old local password',()=>{
