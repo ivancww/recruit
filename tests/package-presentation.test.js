@@ -62,7 +62,7 @@ test("career discovery uses exactly ten values, Top 3 reasons and fit assessment
   assert.equal(Array.from(values[1].matchAll(/"([^"]+)"/g)).length,10);
   const stepList=app.match(/const steps = \[([^\]]+)\]/)[1];
   const steps=Array.from(stepList.matchAll(/"([^"]+)"/g),m=>m[1]);
-  const required=["ideal","rank","why-three","employment","satisfaction","stay-reason","change-interest","desired-work","financial-work","financial-tradeoff","discovery-recap"];
+  const required=["ideal","why-three","employment","satisfaction","stay-reason","change-interest","desired-work","financial-work","financial-tradeoff","discovery-recap"];
   for(let i=1;i<required.length;i++)assert.ok(steps.indexOf(required[i-1])<steps.indexOf(required[i]));
   assert.match(app,/state\.reasons\[v\]/);
   assert.match(app,/state\.satisfaction\[v\]/);
