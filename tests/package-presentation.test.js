@@ -37,3 +37,21 @@ test("header retains independent version and persistent Return to AVA", () => {
   assert.match(html, /返回 AVA/);
   assert.match(app, /headerVersion/);
 });
+
+test("career exploration completes before financial planning prospects and rank overview", () => {
+  const match=app.match(/const steps = \[([^\]]+)\]/);
+  assert.ok(match);
+  const steps=Array.from(match[1].matchAll(/"([^"]+)"/g),x=>x[1]);
+  assert.ok(steps.indexOf("tradeoff") < steps.indexOf("discovery-recap"));
+  assert.ok(steps.indexOf("discovery-recap") < steps.indexOf("industry-prospects"));
+  assert.ok(steps.indexOf("industry-prospects") < steps.indexOf("career-ladder"));
+  assert.ok(steps.indexOf("career-ladder") < steps.indexOf("package-guide"));
+  assert.match(app,/function renderDiscoveryRecap\(/);
+  assert.match(app,/理想工作 Top 3/);
+  assert.match(app,/未核實嘅職級名稱/);
+});
+test("three-phase rail tracks career discovery, prospects and packages", () => {
+  assert.match(app,/id="journeyPhase"/);
+  assert.match(app,/aria-current="step"/);
+  assert.match(app,/職業探索","行業前景／職級","方案及收入/);
+});
