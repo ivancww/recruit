@@ -26,4 +26,4 @@ jobs:
           node --check recruit-content.js
           node --check recruit-engine.js
       - name: Regression suite
-        run: node --test tests/*.test.js
+        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js
