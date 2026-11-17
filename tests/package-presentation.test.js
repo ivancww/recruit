@@ -47,7 +47,7 @@ test("career exploration completes before financial planning prospects and rank 
   assert.ok(steps.indexOf("industry-prospects") < steps.indexOf("career-ladder"));
   assert.ok(steps.indexOf("career-ladder") < steps.indexOf("package-guide"));
   assert.match(app,/function renderDiscoveryRecap\(/);
-  assert.match(app,/理想工作 Top 3/);
+  assert.match(app,/你最重視嘅 Top 3/);
   assert.match(app,/未核實嘅職級名稱/);
 });
 test("three-phase rail tracks career discovery, prospects and packages", () => {
