@@ -139,3 +139,32 @@
 @media(prefers-reduced-motion:reduce){
  .ava-front *{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* AVA Recruit on-canvas User Edit — real Frontstage, no duplicate workspace. */
+.recruit-user-edit-toolbar[hidden]{display:none!important}
+.recruit-user-edit-toolbar{
+  position:sticky;top:0;z-index:35;display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+  width:100%;padding:12px 16px;background:var(--ava-color-surface,#fff);
+  border-bottom:1px solid var(--ava-color-border,#d9e2ee);
+  box-shadow:0 3px 12px rgba(15,23,42,.07)
+}
+.recruit-user-edit-toolbar strong{font-size:14px}
+.recruit-user-edit-toolbar span{font-size:12px;color:var(--ava-color-text-secondary,#64748b);margin-right:auto}
+.recruit-user-edit-toolbar button{
+  border:1px solid var(--ava-color-border,#ccd7e2);border-radius:var(--ava-radius-md,10px);
+  min-height:var(--ava-touch-target,44px);background:var(--ava-color-surface,#fff);
+  color:var(--ava-color-text,#142034);padding:8px 12px;font:inherit;font-size:13px;cursor:pointer
+}
+.recruit-user-edit-toolbar button:disabled{opacity:.48;cursor:not-allowed}
+.recruit-user-edit-toolbar #recruitEditSave{background:var(--ava-color-primary,#1e3a8a);color:#fff}
+.recruit-inline-editable{
+  outline:2px dashed var(--ava-color-primary,#1e3a8a)!important;outline-offset:5px;
+  border-radius:4px;min-height:1.5em;cursor:text
+}
+.recruit-inline-editable:focus-visible{outline:3px solid var(--ava-color-primary,#1e3a8a)!important}
+.recruit-user-extra{margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:650px){
+ .recruit-user-edit-toolbar{position:sticky;top:0;padding:10px 12px;gap:6px}
+ .recruit-user-edit-toolbar strong,.recruit-user-edit-toolbar span{width:100%}
+ .recruit-user-edit-toolbar button{flex:1 1 auto}
+}
