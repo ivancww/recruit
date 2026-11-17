@@ -27,8 +27,9 @@ jobs:
           node --check app.js
           node --check recruit-content.js
           node --check recruit-engine.js
+          node --check recruit-cloud.js
       - name: Regression suite
-        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js tests/recruit-gas.test.js
+        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js tests/recruit-gas.test.js tests/recruit-cloud.test.js
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
