@@ -16,11 +16,20 @@ test("independent customer-facing shell uses AVA frontstage semantics and visibl
   assert.match(html,/id="headerVersion"/);
   assert.match(html,/class="ava-icon"/);
 });
-test("app-specific UI layer loads after legacy styling and uses the canonical font stack",()=>{
-  assert.ok(html.indexOf('href="styles.css"')<html.indexOf('href="ava-recruit-ui.css"'));
+test("canonical design source is included and loads before app-specific CSS",()=>{
+  const files=["styles.css","design-system/tokens.css","design-system/components.css","ava-recruit-ui.css"];
+  let previous=-1;
+  for(const file of files){const index=html.indexOf('href="'+file+'"');assert.ok(index>previous,file+" load order");previous=index;}
   assert.doesNotMatch(html,/fonts\.googleapis\.com/);
-  assert.match(css,/--ava-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang HK","Noto Sans TC",sans-serif/);
-  for(const token of ["--ava-color-background","--ava-color-text","--ava-color-border","--ava-color-primary","--ava-type-page","--ava-touch-target"])assert.ok(css.includes(token));
+  const tokens=load("design-system/tokens.css");
+  const components=load("design-system/components.css");
+  assert.match(tokens,/--ava-font-family:/);
+  assert.match(tokens,/--ava-type-page:/);
+  assert.match(tokens,/--ava-touch-target:/);
+  assert.match(components,/\.ava-card/);
+  assert.match(components,/\.ava-button/);
+  assert.doesNotMatch(css,/--ava-color-primary\s*:/);
+  assert.doesNotMatch(css,/--ava-font-family\s*:/);
 });
 test("canonical responsive and safe-area conventions are present",()=>{
   assert.match(css,/@media\(max-width:650px\)/);
@@ -45,4 +54,14 @@ test("selected and focus states are not color-only, calculations remain independ
   assert.match(css,/min-height:var\(--ava-touch-target\)/);
   assert.ok(legacy.includes(".package-grid"));
   assert.ok(app.includes("E.calculate(state.income)"));
+});
+
+test("PWA owns its shell and never purges other applications",()=>{
+ const sw=load("sw.js");
+ assert.match(sw,/ava-recruit-shell/);
+ assert.match(sw,/startsWith\("ava-recruit-"\)/);
+ assert.match(sw,/cache:"no-store"/);
+ assert.match(sw,/design-system\/tokens\.css/);
+ assert.match(sw,/design-system\/components\.css/);
+ assert.doesNotMatch(sw,/cache-v\d/);
 });
