@@ -171,8 +171,10 @@
     returnButton.href=avaEntry==="frontend"?"https://ivancww.github.io/avaplatform/":`https://ivancww.github.io/avaplatform/?avaSurface=${avaEntry}`;
     if(avaEntry==="user" && userEditor) userEditor.start();
     if(avaEntry==="admin"){
-      // Explicit fail-closed route; the Platform must not register admin:true.
-      toast("正式 Admin 權限尚未啟用，請由 AVA Studio 授權進入");
+      // No role or authority comes from this query string. RecruitAdmin
+      // must exchange a one-time, browser-bound AVA Studio proof with GAS.
+      if(window.RecruitAdmin)window.RecruitAdmin.open(window,document);
+      else toast("Admin 授權模組未能載入");
     }
   }
 })();
