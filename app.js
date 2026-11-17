@@ -36,12 +36,13 @@
   const shell=document.getElementById("flowShell"); shell.innerHTML=`<div id="journeyPhase" class="journey-phase" aria-label="招聘探索階段"></div>`+steps.map(s=>`<section class="flow-page" data-step="${s}">${pages[s]}</section>`).join("");
   let sessions=read(KEYS.sessions,[]), activeId=localStorage.getItem(KEYS.active), mode="recruiter", step="welcome", rankPick=null, result=null;
   let state=fresh();
+  let userEditor=null;
   function fresh(){return {id:`candidate-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name:"Candidate",updatedAt:new Date().toISOString(),step:"welcome",ideal:[],employment:"",current:[],reasons:{},satisfaction:{},stayReason:"",changeInterest:"",desiredType:"",desiredDetail:"",path:"",availability:{},income:{packageId:"PA18",mbAmount:10000,years:Array.from({length:7},()=>({med:0,ci:0,sav:0})),continuousMdrt:false,excellentAgent:false},salary:{monthly:0,growth:0,bonus:0},reflection:[]}}
   function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
   function save(show=false){state.step=step;state.updatedAt=new Date().toISOString();const at=sessions.findIndex(s=>s.id===state.id);if(at>=0)sessions[at]=state;else sessions.unshift(state);localStorage.setItem(KEYS.sessions,JSON.stringify(sessions));localStorage.setItem(KEYS.active,state.id);activeId=state.id;if(show)toast("進度已保存喺呢部裝置")}
   function escape(s){const d=document.createElement("div");d.textContent=String(s??"");return d.innerHTML}
   function money(n){return "$"+Math.round(Number(n)||0).toLocaleString("en-US")}
-  function go(target){if(!steps.includes(target))return;step=target;const phase=document.getElementById("journeyPhase");const phaseIndex=steps.indexOf(step)<steps.indexOf("industry-prospects")?0:steps.indexOf(step)<steps.indexOf("income-intro")?1:2;phase.hidden=step==="welcome"||step==="complete";phase.innerHTML=["職業探索","行業前景／職級","方案及收入"].map((name,i)=>`<span class="journey-phase-item${i===phaseIndex?" current":""}${i<phaseIndex?" finished":""}"${i===phaseIndex?' aria-current="step"':""}>${i+1}. ${name}</span>`).join("");document.querySelectorAll(".flow-page").forEach(p=>p.classList.toggle("active",p.dataset.step===step));document.querySelectorAll(`[data-step="${step}"] .page-count`).forEach(el=>{el.textContent=`${steps.indexOf(step)} / ${steps.length-2}`});document.getElementById("progressFill").style.width=`${Math.max(0,steps.indexOf(step))/(steps.length-2)*100}%`;render();save();window.scrollTo({top:0,behavior:"smooth"})}
+  function go(target){if(!steps.includes(target))return;step=target;const phase=document.getElementById("journeyPhase");const phaseIndex=steps.indexOf(step)<steps.indexOf("industry-prospects")?0:steps.indexOf(step)<steps.indexOf("income-intro")?1:2;phase.hidden=step==="welcome"||step==="complete";phase.innerHTML=["職業探索","行業前景／職級","方案及收入"].map((name,i)=>`<span class="journey-phase-item${i===phaseIndex?" current":""}${i<phaseIndex?" finished":""}"${i===phaseIndex?' aria-current="step"':""}>${i+1}. ${name}</span>`).join("");document.querySelectorAll(".flow-page").forEach(p=>p.classList.toggle("active",p.dataset.step===step));document.querySelectorAll(`[data-step="${step}"] .page-count`).forEach(el=>{el.textContent=`${steps.indexOf(step)} / ${steps.length-2}`});document.getElementById("progressFill").style.width=`${Math.max(0,steps.indexOf(step))/(steps.length-2)*100}%`;render();if(userEditor)userEditor.afterRender();save();window.scrollTo({top:0,behavior:"smooth"})}
   function next(){let i=steps.indexOf(step);if(step==="employment"&&state.employment!=="employed")i=steps.indexOf("desired-work")-1;if(step==="income-input")compute();go(steps[Math.min(i+1,steps.length-1)])}
   function back(){let i=steps.indexOf(step);if(step==="desired-work"&&state.employment!=="employed")i=steps.indexOf("employment")+1;go(steps[Math.max(i-1,0)])}
   function optionButtons(items,selected){return items.map(x=>`<button class="option${selected.includes(x)?" selected":""}" data-value="${escape(x)}" aria-pressed="${selected.includes(x)}">${escape(x)}</button>`).join("")}
@@ -134,8 +135,20 @@
   const userSettings=read(KEYS.settings,{themeName:C.theme.name,defaultMode:"recruiter"});document.getElementById("brandName").textContent=userSettings.themeName;document.getElementById("themeNameInput").value=userSettings.themeName;document.getElementById("defaultModeInput").value=userSettings.defaultMode;mode=userSettings.defaultMode;document.getElementById("modeButton").textContent=mode==="recruiter"?"Recruiter Mode":"Candidate Mode";document.getElementById("versionText").textContent=C.version;document.getElementById("headerVersion").textContent=C.version;
   document.getElementById("saveUserSettings").onclick=()=>{const x={themeName:document.getElementById("themeNameInput").value.trim()||C.theme.name,defaultMode:document.getElementById("defaultModeInput").value};localStorage.setItem(KEYS.settings,JSON.stringify(x));document.getElementById("brandName").textContent=x.themeName;toast("個人設定已保存")};document.getElementById("resetUserSettings").onclick=()=>{localStorage.removeItem(KEYS.settings);document.getElementById("brandName").textContent=C.theme.name;document.getElementById("themeNameInput").value=C.theme.name;toast("已恢復系統預設")};
   document.getElementById("exportButton").onclick=()=>{const blob=new Blob([JSON.stringify({type:"ava-recruit-backup",version:C.version,sessions},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ava-recruit-backup.json";a.click();URL.revokeObjectURL(a.href)};document.getElementById("importInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(d.type!=="ava-recruit-backup"||!Array.isArray(d.sessions))throw Error();sessions=d.sessions;localStorage.setItem(KEYS.sessions,JSON.stringify(sessions));toast("Sessions 已匯入")}catch{toast("備份檔案格式不正確")}};r.readAsText(f)};
-  document.getElementById("unlockAdminButton").onclick=()=>{if(document.getElementById("adminCodeInput").value!=="8888"){toast("Access Code 不正確");return}document.getElementById("adminEditor").hidden=false;const a=read(KEYS.admin,{copy:"可能適合，亦可能唔適合。",version:C.version});document.getElementById("adminCopyInput").value=a.copy;document.getElementById("contentVersionInput").value=a.version};document.getElementById("saveAdminPreview").onclick=()=>{localStorage.setItem(KEYS.admin,JSON.stringify({copy:document.getElementById("adminCopyInput").value,version:document.getElementById("contentVersionInput").value}));toast("Admin 本機預覽已保存")};
+  // Never expose local-only password previews as AVA Studio authorization.
+  // Official Admin is disabled until server-side ava-admin-session-v1 verification
+  // is implemented and production tested. ?avaEntry=admin is not a credential.
+  const adminTab=document.querySelector('[data-settings-tab="admin"]');
+  adminTab.hidden=true;
+  document.getElementById("adminSettings").hidden=true;
+  document.getElementById("unlockAdminButton").disabled=true;
+  document.getElementById("saveAdminPreview").disabled=true;
   let worker;if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(reg=>reg.addEventListener("updatefound",()=>{worker=reg.installing;worker.addEventListener("statechange",()=>{if(worker.state==="installed"&&navigator.serviceWorker.controller)document.getElementById("updateBanner").hidden=false})})).catch(()=>{}));document.getElementById("updateButton").onclick=()=>worker&&worker.postMessage({action:"skipWaiting"});
+  if (window.RecruitUserEdit) {
+    userEditor=window.RecruitUserEdit.create({
+      window,document,storage:localStorage,currentStep:()=>step
+    });
+  }
   if(activeId){const found=sessions.find(s=>s.id===activeId);if(found)state=found}render();go("welcome");
   const avaEntry=new URLSearchParams(window.location.search).get("avaEntry");
   // Cloud data may refresh presentation text only; it never changes Engine,
@@ -156,10 +169,10 @@
     const returnButton=document.getElementById("avaReturnButton");
     returnButton.hidden=false;
     returnButton.href=avaEntry==="frontend"?"https://ivancww.github.io/avaplatform/":`https://ivancww.github.io/avaplatform/?avaSurface=${avaEntry}`;
-    if(avaEntry==="user") openDrawer("settingsDrawer");
+    if(avaEntry==="user" && userEditor) userEditor.start();
     if(avaEntry==="admin"){
-      document.querySelector('[data-settings-tab="admin"]').click();
-      openDrawer("settingsDrawer");
+      // Explicit fail-closed route; the Platform must not register admin:true.
+      toast("正式 Admin 權限尚未啟用，請由 AVA Studio 授權進入");
     }
   }
 })();
