@@ -2,11 +2,10 @@
   "use strict";
   const C = window.RECRUIT_CONTENT, E = window.RecruitEngine;
   const KEYS = { sessions: "ava:recruit:sessions:v2", active: "ava:recruit:active-session:v2", settings: "ava:recruit:user-settings:v2", admin: "ava:recruit:admin-preview:v2" };
-  const steps = ["welcome","ideal","rank","why-three","employment","satisfaction","stay-reason","change-interest","desired-work","financial-work","financial-tradeoff","discovery-recap","industry-prospects","industry","ava-method","career-ladder","career-tradeoff","path-choice","paths","income-intro","package-guide","income-input","income-result","career-compare","reflection","complete"];
+  const steps = ["welcome","ideal","why-three","employment","satisfaction","stay-reason","change-interest","desired-work","financial-work","financial-tradeoff","discovery-recap","industry-prospects","industry","ava-method","career-ladder","career-tradeoff","path-choice","paths","income-intro","package-guide","income-input","income-result","career-compare","reflection","complete"];
   const pages = {
     welcome:`<div class="hero-card"><span class="eyebrow">CAREER DISCOVERY</span><h1>先了解你想要嘅工作，<br>再了解保險業。</h1><p>呢個流程唔係要證明你適合。可能適合，亦可能唔適合；重點係將工作內容、可能得到嘅嘢同需要承擔嘅代價一齊看清楚。</p><div class="hero-actions"><button class="primary-button" data-next>開始探索</button><button class="secondary-button" id="resumeButton" hidden>繼續上次進度</button></div></div>`,
-    ideal:q("01 · 我的理想工作","如果唔考慮工種，你理想中一份工作最重要係啲乜？","先揀最重要 3 項。選項只係幫你表達自己，冇標準答案。",`<div class="option-grid" id="idealOptions"></div><div class="selection-status" id="idealStatus">已選 0／3</div>`,true,"排列 Top 3"),
-    rank:q("01 · 排列優先次序","將三項排成你心目中嘅 Top 1、Top 2、Top 3","點選兩項可以交換位置。",`<div id="rankList" class="rank-list"></div>`,false,"解釋點解重要"),
+    ideal:q("01 · 我的理想工作","如果唔考慮工種，你理想中一份工作最重要係啲乜？","先揀最重要 3 項。選項只係幫你表達自己，冇標準答案。",`<div class="option-grid" id="idealOptions"></div><div class="selection-status" id="idealStatus">已選 0／3</div>`,true,"講下點解重要"),
     employment:q("02 · 現時工作","你而家有冇一份主要工作？","",`<div class="single-options" id="employmentOptions"><button class="choice-card" data-value="employed">有，目前有主要工作</button><button class="choice-card" data-value="not-employed">暫時冇／情況不同</button></div>`,true,"繼續"),
     "why-three":q("01 · 最重要嘅三點","點解你揀呢三樣？","逐項講吓原因，等我哋真正了解對你嚟講有乜意義。",`<div id="whyThreeFields" class="interview-questions"></div>`,false,"了解現職情況",true),
     satisfaction:q("02 · 現時工作","而家份工，能唔能夠滿足你呢三個要求？","逐項睇吓現況，唔係為你評分。",`<div id="satisfactionFields" class="interview-questions"></div>`,false,"點解仍然做呢份工？",true),
@@ -47,7 +46,6 @@
   function render(){
     if(step==="welcome"){const b=document.getElementById("resumeButton");b.hidden=!activeId;b.onclick=()=>{const s=sessions.find(x=>x.id===activeId);if(s){state=s;go(s.step==="complete"?"reflection":s.step)}}}
     if(step==="ideal")renderMulti("idealOptions",C.idealValues,state.ideal,"idealStatus");
-    if(step==="rank"){document.getElementById("rankList").innerHTML=state.ideal.map((x,i)=>`<button class="rank-item${rankPick===i?" selected":""}" data-rank="${i}"><span class="rank-number">Top ${i+1}</span><strong>${escape(x)}</strong></button>`).join("")}
     if(step==="employment")renderSingle("employmentOptions",state.employment);
     if(step==="why-three")renderWhyThree();
     if(step==="satisfaction")renderSatisfaction();
