@@ -42,9 +42,34 @@
   function save(show=false){state.step=step;state.updatedAt=new Date().toISOString();const at=sessions.findIndex(s=>s.id===state.id);if(at>=0)sessions[at]=state;else sessions.unshift(state);localStorage.setItem(KEYS.sessions,JSON.stringify(sessions));localStorage.setItem(KEYS.active,state.id);activeId=state.id;if(show)toast("進度已保存喺呢部裝置")}
   function escape(s){const d=document.createElement("div");d.textContent=String(s??"");return d.innerHTML}
   function money(n){return "$"+Math.round(Number(n)||0).toLocaleString("en-US")}
-  function go(target){if(!steps.includes(target))return;step=target;const phase=document.getElementById("journeyPhase");const phaseIndex=steps.indexOf(step)<steps.indexOf("industry-prospects")?0:steps.indexOf(step)<steps.indexOf("income-intro")?1:2;phase.hidden=step==="welcome"||step==="complete";phase.innerHTML=["職業探索","行業前景／職級","方案及收入"].map((name,i)=>`<span class="journey-phase-item${i===phaseIndex?" current":""}${i<phaseIndex?" finished":""}"${i===phaseIndex?' aria-current="step"':""}>${i+1}. ${name}</span>`).join("");document.querySelectorAll(".flow-page").forEach(p=>p.classList.toggle("active",p.dataset.step===step));document.querySelectorAll(`[data-step="${step}"] .page-count`).forEach(el=>{el.textContent=`${steps.indexOf(step)} / ${steps.length-2}`});document.getElementById("progressFill").style.width=`${Math.max(0,steps.indexOf(step))/(steps.length-2)*100}%`;render();if(userEditor)userEditor.afterRender();save();window.scrollTo({top:0,behavior:"smooth"})}
-  function next(){let i=steps.indexOf(step);if(step==="employment"&&state.employment!=="employed")i=steps.indexOf("desired-work")-1;if(step==="income-input")compute();go(steps[Math.min(i+1,steps.length-1)])}
-  function back(){let i=steps.indexOf(step);if(step==="desired-work"&&state.employment!=="employed")i=steps.indexOf("employment")+1;go(steps[Math.max(i-1,0)])}
+  function flowSteps(){return userEditor?userEditor.sequence():steps;}
+  function go(target){
+    const flow=flowSteps();
+    if(!flow.includes(target))return;
+    step=target;
+    const at=flow.indexOf(step);
+    const anchor=steps.includes(step)?step:flow.slice(0,at).reverse().find(x=>steps.includes(x))||"welcome";
+    const phase=document.getElementById("journeyPhase");
+    const phaseIndex=steps.indexOf(anchor)<steps.indexOf("industry-prospects")?0:steps.indexOf(anchor)<steps.indexOf("income-intro")?1:2;
+    phase.hidden=step==="welcome"||step==="complete";
+    phase.innerHTML=["職業探索","行業前景／職級","方案及收入"].map((name,i)=>
+      `<span class="journey-phase-item${i===phaseIndex?" current":""}${i<phaseIndex?" finished":""}"${i===phaseIndex?' aria-current="step"':""}>${i+1}. ${name}</span>`).join("");
+    document.querySelectorAll(".flow-page").forEach(p=>p.classList.toggle("active",p.dataset.step===step));
+    document.querySelectorAll(`[data-step="${step}"] .page-count`).forEach(el=>{el.textContent=`${at} / ${flow.length-2}`});
+    document.getElementById("progressFill").style.width=`${Math.max(0,at)/(flow.length-2)*100}%`;
+    render();if(userEditor)userEditor.afterRender();save();window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function next(){
+    const flow=flowSteps(),i=flow.indexOf(step);
+    if(step==="employment"&&state.employment!=="employed"){go("desired-work");return}
+    if(step==="income-input")compute();
+    go(flow[Math.min(i+1,flow.length-1)]);
+  }
+  function back(){
+    const flow=flowSteps(),i=flow.indexOf(step);
+    if(step==="desired-work"&&state.employment!=="employed"){go("employment");return}
+    go(flow[Math.max(i-1,0)]);
+  }
   function optionButtons(items,selected){return items.map(x=>`<button class="option${selected.includes(x)?" selected":""}" data-value="${escape(x)}" aria-pressed="${selected.includes(x)}">${escape(x)}</button>`).join("")}
   function render(){
     if(step==="welcome"){const b=document.getElementById("resumeButton");b.hidden=!activeId;b.onclick=()=>{const s=sessions.find(x=>x.id===activeId);if(s){state=s;go(s.step==="complete"?"reflection":s.step)}}}
@@ -146,7 +171,8 @@
   let worker;if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(reg=>reg.addEventListener("updatefound",()=>{worker=reg.installing;worker.addEventListener("statechange",()=>{if(worker.state==="installed"&&navigator.serviceWorker.controller)document.getElementById("updateBanner").hidden=false})})).catch(()=>{}));document.getElementById("updateButton").onclick=()=>worker&&worker.postMessage({action:"skipWaiting"});
   if (window.RecruitUserEdit) {
     userEditor=window.RecruitUserEdit.create({
-      window,document,storage:localStorage,currentStep:()=>step
+      window,document,storage:localStorage,currentStep:()=>step,
+      navigateStep:target=>go(target),baseSteps:steps
     });
   }
   if(activeId){const found=sessions.find(s=>s.id===activeId);if(found)state=found}render();go("welcome");
