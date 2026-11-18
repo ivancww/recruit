@@ -1,0 +1,14 @@
+# AVA Recruit — Repo Development Rules
+
+> Authority: `ivancww/avaplatform/docs/MOTHER-RULES.md` and `design-system/DESIGN-SYSTEM.md`. This file enforces those standards for Recruit; it never replaces them.
+
+1. `ivancww/recruit` is an Independent App, not an AVA Platform source folder. Preserve Frontstage, Recruit Engine, candidate sessions, independent deployment, PWA and same-origin release lifecycle.
+2. Expose `?avaEntry=frontend` as the real customer Frontstage; `?avaEntry=user` edits the **same Frontstage**, never a duplicate settings workspace. Support preview, one Save Local, reopen persistence and User/Official isolation. Only approved sales-flow presentation text is User-editable; formula, MB, qualification and other protected official parameters never are.
+3. Admin uses **only** the canonical `ava-admin-session-v1` with AVA Studio one login, one-time ticket, nonce, exact opener/browser proof, server-to-server Platform verification, appId/operation/expiry checks, replay rejection, protected Official datasets and read-after-write confirmation. No local PIN, copied URL, query flag or referrer grants Admin authority. `admin:false` until production gate is proven.
+4. `recruit-engine.js` owns all financial calculations; protected MB options/FP12/PA18/TTFS and FYC/YEB/MDRT/renewal contracts remain unchanged without Owner approval and company-source validation. Google Sheet represents candidate Official Data; routine changes do not silently modify engine logic.
+5. Google Sheet ID `13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30` is the sole Recruit dataset. GAS Web App ID remains app-specific and uses one `doGet` and one `doPost`; never share Script Properties or private credentials with client source.
+6. Preserve candidate data locally and avoid transmitting it to GAS. Preserve backups across browser/Shell updates. Never clear all LocalStorage or other Apps' caches.
+7. All user-facing App Shell changes increment semantic version and ship dated published Traditional Chinese release notes plus once-per-device notification and safe forced update. Google Sheet dataset-only changes do not bump App Shell.
+8. Follow canonical AVA design tokens/components; test 390px phone, 717px unfolded foldable, 768px iPad portrait, 1024px iPad landscape and actual iPad/HONOR device where available. No unneeded horizontal overflow, preserve visible 返回 AVA.
+9. Create one focused Draft PR and run node syntax, regression, GAS contract and browser tests. A mock or CI pass is not production GAS, authenticated browser, persistence or physical-device proof. See `docs/INTEGRATION-VERIFICATION.md`.
+10. **Ordering:** independent Recruit implementation → CI review → Owner-approved merge → independent GitHub Pages + GAS deployment and live verification → Platform single Registry PR with accurate frontend/user/admin capabilities → Platform CI and Owner-approved merge. Never register or claim admin:true prematurely.

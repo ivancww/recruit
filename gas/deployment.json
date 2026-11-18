@@ -1,0 +1,17 @@
+{
+  "appId": "recruit",
+  "contractVersion": "recruit-dataset-v1",
+  "sheetUrl": "https://docs.google.com/spreadsheets/d/13kT06kYD5v1pea1wcLc0f0j991VEiKHPq0KOgwiRk30/edit",
+  "gasWebAppUrl": "https://script.google.com/macros/s/AKfycbzgUnyK9bVOovaj7C5tk4MZXIlTOOnv-Dq4f6KLvk-dWkmk66KkR-yJSVpyyTDAcjUIHA/exec",
+  "transport": "Google Apps Script ContentService JSON (redirect)",
+  "actions": [
+    "health",
+    "catalog",
+    "financial"
+  ],
+  "state": "awaiting-live-verification",
+  "runtimeIntegrationEnabled": false,
+  "officialReadEnabled": false,
+  "financialReadEnabled": false,
+  "warning": "GAS deployment provided by Owner; live endpoint and cross-origin behavior unverified. App keeps local content and calculations until verified."
+}

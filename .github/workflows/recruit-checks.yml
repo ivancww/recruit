@@ -1,0 +1,59 @@
+name: Recruit checks
+on:
+  pull_request:
+    paths:
+      - '*.js'
+      - '*.html'
+      - '*.css'
+      - 'gas/**'
+      - 'releases.json'
+      - 'design-system/**'
+      - 'tests/**'
+      - '.github/workflows/recruit-checks.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: |
+          node --check app.js
+          node --check recruit-content.js
+          node --check recruit-engine.js
+          node --check recruit-cloud.js
+          node --check recruit-user-edit.js
+          node --check recruit-user-pages.js
+          node --check recruit-admin.js
+          node --check recruit-releases.js
+      - name: Regression suite
+        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js tests/recruit-gas.test.js tests/recruit-cloud.test.js tests/recruit-admin.test.js tests/recruit-releases.test.js tests/recruit-gas-admin-write.test.js tests/recruit-user-pages.test.js
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test tooling
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Browser rendered responsive and journey smoke
+        run: node --test tests/ui-smoke.test.js
+      - name: Upload AVA UI review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recruit-ava-ui-screenshots
+          path: ui-snapshots/*.png
+          if-no-files-found: ignore
+          retention-days: 14
