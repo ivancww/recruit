@@ -30,10 +30,11 @@ jobs:
           node --check recruit-engine.js
           node --check recruit-cloud.js
           node --check recruit-user-edit.js
+          node --check recruit-user-pages.js
           node --check recruit-admin.js
           node --check recruit-releases.js
       - name: Regression suite
-        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js tests/recruit-gas.test.js tests/recruit-cloud.test.js tests/recruit-admin.test.js tests/recruit-releases.test.js tests/recruit-gas-admin-write.test.js
+        run: node --test tests/recruit-engine.test.js tests/static-contract.test.js tests/package-presentation.test.js tests/ava-ui-contract.test.js tests/recruit-gas.test.js tests/recruit-cloud.test.js tests/recruit-admin.test.js tests/recruit-releases.test.js tests/recruit-gas-admin-write.test.js tests/recruit-user-pages.test.js
   browser:
     runs-on: ubuntu-24.04
     timeout-minutes: 12
