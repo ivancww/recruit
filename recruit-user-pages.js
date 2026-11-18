@@ -13,7 +13,7 @@
    if(!p||typeof p!=="object"||!ID.test(p.id)||used.has(p.id)||
      !anchors.includes(p.after)||typeof p.title!=="string"||!p.title.trim()||
      p.title.length>100||typeof p.text!=="string"||p.text.length>800||
-     /[<>\u0000-\u001f]/.test(p.title+p.text))return false;
+     (/[<>\u0000-\u001f]/.test(p.title)||/[<>\u0000-\u0009\u000b-\u001f]/.test(p.text)))return false;
    used.add(p.id);return true;
   }).map(p=>({id:p.id,after:p.after,title:p.title,text:p.text}));
  }
@@ -85,7 +85,7 @@
    if(!record)return;
    const field=el.matches(".recruit-custom-title")?"title":"text";
    const value=el.textContent;
-   if(value.length>(field==="title"?100:800)||/[<>\u0000-\u001f]/.test(value)){
+   if(value.length>(field==="title"?100:800)||(field==="title"?/[<>\u0000-\u001f]/:/[<>\u0000-\u0009\u000b-\u001f]/).test(value)){
     el.textContent=record[field];return;
    }
    record[field]=value;markDirty();
