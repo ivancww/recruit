@@ -209,9 +209,10 @@ test("User Edit can add, preview, reorder, persist and remove custom Frontstage 
  await page.click("#recruitEditSave");
  await page.reload();
  await page.click('[data-step="welcome"] [data-next]');
- assert.equal(await page.locator(".recruit-user-created-page.active").getAttribute("data-step"),firstId);
+ assert.equal(await page.locator(".recruit-user-created-page.active").getAttribute("data-step"),secondId);
  await page.click("#recruitEditToggle");
  await page.click("#recruitEditToggle");
+ page.once("dialog",dialog=>dialog.accept());
  await page.click("#recruitPageRemove");
  await page.click("#recruitEditSave");
  await page.reload();
