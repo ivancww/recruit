@@ -8,7 +8,7 @@
 
 **平台：** `ivancww/avaplatform`；Mother Rules `docs/MOTHER-RULES.md`
 
-**目前 Recruit PR：** #3；**App 版本候選：** v2.1.2；**狀態：未 Merge／未部署，未批准正式整合。**
+**目前 Recruit PR：** #3；**App 版本候選：** v2.1.3；**狀態：未 Merge／未部署，未批准正式整合。**
 
 ## 獨立 App 三個入口
 
