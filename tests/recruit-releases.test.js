@@ -9,14 +9,14 @@ test('App release manifest includes immutable identity, Chinese details and visi
  assert.equal(releases.valid(data),true);
  assert.equal(data.currentVersion,'v2.1.3');
  assert.equal(data.releases.filter(x=>x.published).length,2);
- assert.equal(data.releases[0].id,'recruit-v2.1.3-20261117');
+ assert.equal(data.releases[0].id,'recruit-v2.1.3-20261118');
  assert.match(load('index.html'),/v2\.1\.3/);
  assert.match(load('recruit-content.js'),/version: "v2\.1\.3"/);
 });
 test('semantic versions compare numerically; malformed versions cannot trigger lock',()=>{
  assert.equal(releases.compare('v2.10.0','v2.9.9'),1);
  assert.equal(releases.compare('v2.1.3','v2.1.3'),0);
- assert.equal(releases.compare('v2.1.3','v2.1.3'),-1);
+ assert.equal(releases.compare('v2.1.3','v2.1.4'),-1);
  assert.equal(releases.compare('2.1.0','v2.1.0'),0);
  assert.equal(releases.compare('bad','v2.1.3'),null);
  assert.equal(releases.compare('v2.1.3','https://x.invalid'),null);
