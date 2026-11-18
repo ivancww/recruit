@@ -1,7 +1,7 @@
 (function (root) {
   "use strict";
   root.RECRUIT_CONTENT = Object.freeze({
-    version: "v2.1.2",
+    version: "v2.1.3",
     theme: Object.freeze({ name: "AVA Recruit", subtitle: "Career Discovery & Recruitment Conversation System" }),
     idealValues: Object.freeze(["收入有上升空間", "穩定收入", "時間自主", "工作有意義", "發展／晉升空間", "可以建立自己事業", "團隊環境", "專業成長", "Work-Life Balance", "公司福利"]),
     currentValues: Object.freeze(["穩定收入", "公司福利", "固定工作時間", "清晰晉升制度", "工作穩定", "團隊支援", "專業身份", "固定假期", "熟悉工作環境", "其他"]),
