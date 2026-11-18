@@ -19,8 +19,8 @@
       "id": "recruit-v2.1.2-20261117",
       "version": "v2.1.2",
       "publishedAt": "2026-11-17",
-      "published": true,
-      "title": "招聘介面、流程及獨立資料管理更新",
+      "published": false,
+      "title": "未發布開發候選：招聘流程與資料管理",
       "changes": [
         "更新 AVA 一致化招聘流程與 iPad／摺疊屏佈局。",
         "加入原畫面「我的流程」編輯、預覽及一次過本機保存。",
