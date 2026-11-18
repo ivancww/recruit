@@ -5,6 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
   const KEY = "ava:recruit:user-flow-overrides:v1";
+  const PAGES = typeof module==="object" && module.exports ? require("./recruit-user-pages.js") : globalThis.RecruitUserPages;
   const EDITABLE = Object.freeze([
     "welcome","ideal","why-three","employment","satisfaction","stay-reason",
     "desired-work","change-interest","financial-work","financial-tradeoff",
@@ -30,8 +31,8 @@
       if (safeText(row.extra, MAX_EXTRA)) clean.extra = row.extra;
       if (Object.keys(clean).length) result[step] = clean;
     });
-    result.__pages = root.RecruitUserPages ?
-      root.RecruitUserPages.clean(input.__pages,EDITABLE) : [];
+    result.__pages = PAGES ?
+      PAGES.clean(input.__pages,EDITABLE) : [];
     return result;
   }
   function create(options) {
@@ -184,8 +185,8 @@
       dirty = true;
       repaint();
     };
-    if(root.RecruitUserPages){
-      userPages=root.RecruitUserPages.create({
+    if(PAGES){
+      userPages=PAGES.create({
         document:doc,window:win,shell,toolbar,baseSteps,anchors:EDITABLE,
         currentStep:goStep,navigate:navigateStep,
         getSaved:()=>saved,getStaged:()=>staged,
