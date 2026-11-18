@@ -30,11 +30,15 @@
       if (safeText(row.extra, MAX_EXTRA)) clean.extra = row.extra;
       if (Object.keys(clean).length) result[step] = clean;
     });
+    result.__pages = root.RecruitUserPages ?
+      root.RecruitUserPages.clean(input.__pages,EDITABLE) : [];
     return result;
   }
   function create(options) {
     const win = options.window, doc = options.document, storage = options.storage;
     const goStep = options.currentStep;
+    const navigateStep = options.navigateStep || (()=>{});
+    const baseSteps = options.baseSteps || EDITABLE;
     let saved = {}, staged = {}, enabled = false, preview = false, dirty = false;
     try { saved = normalise(JSON.parse(storage.getItem(KEY) || "{}")); } catch (_) {}
     staged = JSON.parse(JSON.stringify(saved));
@@ -53,6 +57,7 @@
       '<button type="button" id="recruitEditSave">一次過保存</button>' +
       '<button type="button" id="recruitEditExit">完成</button>';
     shell.parentNode.insertBefore(toolbar,shell);
+    let userPages=null;
 
     function locate(step) {
       if (!EDITABLE.includes(step)) return null;
@@ -72,6 +77,7 @@
       }
     }
     function repaint() {
+      if(userPages)userPages.repaint();
       doc.querySelectorAll(".flow-page").forEach(node => {
         const step = node.dataset.step, target = locate(step);
         if (!target) return;
@@ -178,6 +184,17 @@
       dirty = true;
       repaint();
     };
+    if(root.RecruitUserPages){
+      userPages=root.RecruitUserPages.create({
+        document:doc,window:win,shell,toolbar,baseSteps,anchors:EDITABLE,
+        currentStep:goStep,navigate:navigateStep,
+        getSaved:()=>saved,getStaged:()=>staged,
+        markDirty:()=>{dirty=true;
+          toolbar.querySelector("#recruitEditSave").disabled=false;
+          toolbar.querySelector("#recruitEditStatus").textContent="有未保存修改";},
+        isEditing:()=>enabled,isPreview:()=>preview
+      });
+    }
     toolbar.querySelector("#recruitEditSave").onclick = save;
     toolbar.querySelector("#recruitEditExit").onclick = close;
     win.addEventListener("beforeunload",e=>{
@@ -187,7 +204,9 @@
     });
     repaint();
     return { start,close,save,afterRender:repaint,isEnabled:()=>enabled,isDirty:()=>dirty,
-      getSaved:()=>JSON.parse(JSON.stringify(saved)),allowedSteps:EDITABLE };
+      getSaved:()=>JSON.parse(JSON.stringify(saved)),allowedSteps:EDITABLE,
+      sequence:()=>userPages?userPages.sequence():baseSteps,
+      containsStep:id=>userPages?userPages.contains(id):baseSteps.includes(id) };
   }
   return Object.freeze({ KEY, EDITABLE, normalise, create });
 });
