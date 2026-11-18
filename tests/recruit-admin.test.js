@@ -16,19 +16,33 @@ test('AVA Studio Admin accepts only exact app identity, contract, expiry, server
   assert.equal(admin.validateExchange({...exchange(),...changed}),false);
  }
 });
-test('Admin Official Read needs record IDs, revision, expected tabs and exact contract',()=>{
+test('Admin Official Read requires all 17 approved tabs, exact text-field allowlist, unique IDs and revisions',()=>{
+ const names=['招聘流程','工作價值選項','探索提問','滿足程度選項','理想工作類型',
+ '理財工作內容','理財工作取捨','行業前景','保障服務範疇','職涯發展','發展方式',
+ '招聘方案','津貼金額選項','佣金計算參數','年終獎勵級距','專業獎勵級距','續期佣金規則'];
+ const editable={'探索提問':['問題','備註'],'理財工作內容':['工作內容','實際要求'],
+ '理財工作取捨':['可能得到','需要付出'],'行業前景':['說明','提示'],
+ '保障服務範疇':['範疇','資格提示'],'職涯發展':['主要工作','資格說明'],
+ '發展方式':['可能得到','需要承擔']};
  const minimal={success:true,appId:'recruit',contract:'ava-admin-session-v1',
- data:{editable:{'理財工作取捨':['可能得到','需要付出']},
- tabs:Object.fromEntries(Array.from({length:11},(_,i)=>[
- '中文分頁'+i,{columns:['主題','紀錄代碼','修訂版'],
- rows:[{'主題':'示例','紀錄代碼':'07-0001','修訂版':1}]}
- ]))}};
+  data:{editable,tabs:Object.fromEntries(names.map((name,i)=>[name,{
+   columns:['主題','紀錄代碼','修訂版'],
+   rows:[{'主題':'示例','紀錄代碼':String(i+1).padStart(2,'0')+'-0001','修訂版':1}]
+  }]))}};
  assert.equal(admin.validateRead(minimal),true);
- assert.equal(admin.validateRead({...minimal,data:{...minimal.data,tabs:{}}}),false);
- assert.equal(admin.validateRead({...minimal,appId:'other'}),false);
- const bad=JSON.parse(JSON.stringify(minimal));
- bad.data.tabs['中文分頁1'].rows[0]['紀錄代碼']='missing';
+ const clone=()=>JSON.parse(JSON.stringify(minimal));
+ const missing=clone();delete missing.data.tabs['招聘流程'];
+ assert.equal(admin.validateRead(missing),false);
+ const injected=clone();injected.data.editable['招聘方案']=['每月津貼'];
+ assert.equal(admin.validateRead(injected),false);
+ const different=clone();different.data.editable['探索提問']=['紀錄代碼'];
+ assert.equal(admin.validateRead(different),false);
+ const bad=clone();bad.data.tabs['理財工作取捨'].rows[0]['紀錄代碼']='missing';
  assert.equal(admin.validateRead(bad),false);
+ const duplicate=clone();duplicate.data.tabs['理財工作取捨'].rows.push(
+  {...duplicate.data.tabs['理財工作取捨'].rows[0]});
+ assert.equal(admin.validateRead(duplicate),false);
+ assert.equal(admin.validateRead({...minimal,appId:'other'}),false);
 });
 test('Official Write must confirm record ID, revision, persisted fields and readback',()=>{
  const request={tab:'理財工作取捨',recordId:'07-0001',expectedRevision:2,
