@@ -13,6 +13,7 @@
     "career-tradeoff","path-choice","paths","income-intro","package-guide",
     "career-compare","reflection","complete"
   ]);
+  const PAGE_ANCHORS = Object.freeze(EDITABLE.filter(step=>step!=="complete"));
   // Financial simulation/input/output and protected package parameters are
   // deliberately NOT editable. User Edit must never mutate Recruit Engine.
   const MAX_TITLE = 100, MAX_SUPPORT = 500, MAX_EXTRA = 800;
@@ -32,7 +33,7 @@
       if (Object.keys(clean).length) result[step] = clean;
     });
     result.__pages = PAGES ?
-      PAGES.clean(input.__pages,EDITABLE) : [];
+      PAGES.clean(input.__pages,PAGE_ANCHORS) : [];
     return result;
   }
   function create(options) {
@@ -187,7 +188,7 @@
     };
     if(PAGES){
       userPages=PAGES.create({
-        document:doc,window:win,shell,toolbar,baseSteps,anchors:EDITABLE,
+        document:doc,window:win,shell,toolbar,baseSteps,anchors:PAGE_ANCHORS,
         currentStep:goStep,navigate:navigateStep,
         getSaved:()=>saved,getStaged:()=>staged,
         markDirty:()=>{dirty=true;
