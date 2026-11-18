@@ -15,12 +15,12 @@
 | 入口 | 地址 | 設定／實際狀態 |
 |---|---|---|
 | Front | `https://ivancww.github.io/recruit/index.html?avaEntry=frontend` | 原生顧客招聘流程；不顯示 User 草稿工具或 Admin 權限 |
-| User Edit | `https://ivancww.github.io/recruit/index.html?avaEntry=user` | 同一 Frontstage 原畫面修改：標題、說明、自訂文字，預覽、一次 Save Local、重開保留 |
+| User Edit | `https://ivancww.github.io/recruit/index.html?avaEntry=user` | 同一 Frontstage 原畫面修改：標題、說明、自訂文字，新增／刪除／調整自訂文字頁次序，預覽、一次 Save Local、重開保留 |
 | Admin | `https://ivancww.github.io/recruit/index.html?avaEntry=admin` | 單獨網址只顯示「未獲授權」。須由 AVA Studio 票據、nonce 及 browser proof 進入，後端驗證。**未正式部署驗證** |
 
 ## User Edit / Official / Candidate 資料邊界
 
-- User Edit 將修改暫存於記憶體；「預覽」先查看草稿，「一次過保存」後才將 User Overrides 寫入 `ava:recruit:user-flow-overrides:v1`，與求職者 Sessions、正式 Google Sheet 無關。
+- User Edit 允許新增、刪除、調整**同一插入位置**的本機自訂文字頁（最多 12 頁），不容許重排官方核心問答或財務流程；將修改暫存於記憶體；「預覽」先查看草稿，「一次過保存」後才將 User Overrides 寫入 `ava:recruit:user-flow-overrides:v1`，與求職者 Sessions、正式 Google Sheet 無關。
 - 受保護的收入輸入、收入結果、正式方案資格、Recruit Engine 及 GAS 設定不能經 User Edit 修改。新增的是頁內文字，而不是第二套 Frontstage。
 - 求職者答案、Session 及個人設定在 App 本機，GAS 不接受求職者資料上載。
 - 招聘內容 `catalog` 只讀指定 11 個中文分頁；缺少正式核實的財務參數繼續只使用 App 既有計算。
