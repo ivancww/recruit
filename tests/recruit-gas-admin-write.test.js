@@ -89,6 +89,9 @@ test('no arbitrary financial writes, field substitutions or authorization bypass
   {tab:'佣金計算參數',fields:{'參數數值':'10000'}},
   {tab:'理財工作取捨',fields:{'主題':'竄改'}},
   {tab:'理財工作取捨',fields:{'可能得到':'<script>alert(1)</script>'}},
+  {tab:'理財工作取捨',fields:{'可能得到':'=IMPORTXML("https://example.invalid","//")'}},
+  {tab:'理財工作取捨',fields:{'可能得到':'+SUM(1,1)'}},
+  {tab:'理財工作取捨',fields:{'可能得到':' @SUM(1,1)'}},
   {tab:'理財工作取捨',fields:{}}
  ];
  for(const delta of samples){
