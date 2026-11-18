@@ -74,7 +74,7 @@ test("career discovery uses exactly ten values, Top 3 reasons and fit assessment
 });
 test("non-employed respondents skip current-job questions without losing Top 3",()=>{
   assert.match(app,/step==="employment"&&state\.employment!=="employed"/);
-  assert.match(app,/steps\.indexOf\("desired-work"\)-1/);
+  assert.match(app,/go\("desired-work"\)/);
   assert.match(app,/step==="desired-work"&&state\.employment!=="employed"/);
   assert.match(app,/state\.ideal\.map/);
 });
