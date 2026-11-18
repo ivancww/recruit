@@ -8,6 +8,21 @@
   const PLATFORM_ORIGIN = "https://ivancww.github.io";
   const CONTRACT = "ava-admin-session-v1";
   const ENDPOINT = "https://script.google.com/macros/s/AKfycbzgUnyK9bVOovaj7C5tk4MZXIlTOOnv-Dq4f6KLvk-dWkmk66KkR-yJSVpyyTDAcjUIHA/exec";
+  const EXPECTED_TABS = Object.freeze([
+    "招聘流程","工作價值選項","探索提問","滿足程度選項","理想工作類型",
+    "理財工作內容","理財工作取捨","行業前景","保障服務範疇",
+    "職涯發展","發展方式","招聘方案","津貼金額選項","佣金計算參數",
+    "年終獎勵級距","專業獎勵級距","續期佣金規則"
+  ]);
+  const EDITABLE_TABS = Object.freeze({
+    "探索提問":["問題","備註"],
+    "理財工作內容":["工作內容","實際要求"],
+    "理財工作取捨":["可能得到","需要付出"],
+    "行業前景":["說明","提示"],
+    "保障服務範疇":["範疇","資格提示"],
+    "職涯發展":["主要工作","資格說明"],
+    "發展方式":["可能得到","需要承擔"]
+  });
   function isObject(value) {
     return Boolean(value) && typeof value === "object" && !Array.isArray(value);
   }
@@ -22,14 +37,30 @@
         value.contract !== CONTRACT || !isObject(value.data) ||
         !isObject(value.data.tabs) || !isObject(value.data.editable)) return false;
     const names = Object.keys(value.data.tabs);
-    return names.length >= 11 && names.length <= 17 && names.every(name => {
+    if (names.length !== EXPECTED_TABS.length ||
+        !EXPECTED_TABS.every(name => Object.prototype.hasOwnProperty.call(value.data.tabs,name))) return false;
+    const editableNames = Object.keys(value.data.editable);
+    if (editableNames.length !== Object.keys(EDITABLE_TABS).length ||
+        !editableNames.every(name => Object.prototype.hasOwnProperty.call(EDITABLE_TABS,name) &&
+          Array.isArray(value.data.editable[name]) &&
+          value.data.editable[name].length === EDITABLE_TABS[name].length &&
+          EDITABLE_TABS[name].every(field => value.data.editable[name].includes(field)))) return false;
+    return names.every(name => {
       const tab = value.data.tabs[name];
-      return isObject(tab) && Array.isArray(tab.columns) && Array.isArray(tab.rows) &&
-        tab.columns.includes("紀錄代碼") && tab.columns.includes("修訂版") &&
-        tab.rows.every(row => isObject(row) && typeof row["紀錄代碼"] === "string" &&
-          /^\d{2}-\d{4}$/.test(row["紀錄代碼"]) &&
-          Number.isInteger(Number(row["修訂版"])) &&
-          Number(row["修訂版"]) >= 1);
+      if (!isObject(tab) || !Array.isArray(tab.columns) || !Array.isArray(tab.rows) ||
+          tab.columns.length > 20 || tab.rows.length > 2000 ||
+          !tab.columns.includes("紀錄代碼") || !tab.columns.includes("修訂版") ||
+          new Set(tab.columns).size !== tab.columns.length) return false;
+      const ids = new Set();
+      return tab.rows.every(row => {
+        if (!isObject(row) || typeof row["紀錄代碼"] !== "string" ||
+            !/^\d{2}-\d{4}$/.test(row["紀錄代碼"]) ||
+            ids.has(row["紀錄代碼"]) ||
+            !Number.isSafeInteger(Number(row["修訂版"])) ||
+            Number(row["修訂版"]) < 1) return false;
+        ids.add(row["紀錄代碼"]);
+        return true;
+      });
     });
   }
   function validatePersisted(value, request) {
