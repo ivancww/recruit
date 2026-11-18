@@ -1,8 +1,20 @@
 {
   "appId": "recruit",
   "schema": "ava-independent-release-v1",
-  "currentVersion": "v2.1.2",
+  "currentVersion": "v2.1.3",
   "releases": [
+    {
+      "id": "recruit-v2.1.3-20261118",
+      "version": "v2.1.3",
+      "publishedAt": "2026-11-18",
+      "published": true,
+      "title": "我的流程文字頁管理",
+      "changes": [
+        "在原有招聘流程直接新增自訂文字頁，並可刪除及調整同一位置文字頁先後次序。",
+        "個人文字頁與其他 User Edit 修改一併預覽及 Save Local，重開保留。",
+        "完整保留官方招聘方案、收入計算引擎、Google Sheet 與 AVA Studio Admin 權限邊界。"
+      ]
+    },
     {
       "id": "recruit-v2.1.2-20261117",
       "version": "v2.1.2",
