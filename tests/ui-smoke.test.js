@@ -221,3 +221,72 @@ test("User Edit can add, preview, reorder, persist and remove custom Frontstage 
  assert.deepEqual(errors,[]);
  await page.close();
 });
+
+test("AVA Studio Admin browser proof opens authorized Chinese Official editor and verifies real UI readback",async()=>{
+ if(!browserAvailable)return test.skip("Playwright Chromium unavailable");
+ const page=await browser.newPage({viewport:{width:768,height:1024}});
+ const errors=[];page.on("pageerror",e=>errors.push(e.message));
+ const names=["招聘流程","工作價值選項","探索提問","滿足程度選項","理想工作類型",
+ "理財工作內容","理財工作取捨","行業前景","保障服務範疇",
+ "職涯發展","發展方式","招聘方案","津貼金額選項","佣金計算參數",
+ "年終獎勵級距","專業獎勵級距","續期佣金規則"];
+ const editable={"探索提問":["問題","備註"],"理財工作內容":["工作內容","實際要求"],
+ "理財工作取捨":["可能得到","需要付出"],"行業前景":["說明","提示"],
+ "保障服務範疇":["範疇","資格提示"],"職涯發展":["主要工作","資格說明"],
+ "發展方式":["可能得到","需要承擔"]};
+ let newText="原始說明",writeCount=0;
+ function dataset(){
+  return {success:true,appId:"recruit",contract:"ava-admin-session-v1",
+   data:{editable,tabs:Object.fromEntries(names.map((name,i)=>{
+    const columns=["主題",...(editable[name]||[]),"紀錄代碼","修訂版"];
+    return [name,{columns,rows:[Object.fromEntries(columns.map(field=>[
+     field,field==="紀錄代碼"?String(i+1).padStart(2,"0")+"-0001":
+     field==="修訂版"?(name==="理財工作取捨"&&writeCount?2:1):
+     field==="可能得到"?newText:"測試資料"
+    ]))]}]
+   }))}};
+ }
+ await page.route("**/macros/s/**/exec",async route=>{
+  if(route.request().method()!=="POST")return route.fulfill({status:405,body:"not allowed"});
+  const body=route.request().postDataJSON();
+  let payload;
+  if(body.action==="exchangeAdminSession")
+   payload={success:true,appId:"recruit",contract:"ava-admin-session-v1",
+    adminSessionProof:"server-issued-browser-bound-proof",
+    expiresAt:new Date(Date.now()+60000).toISOString()};
+  else if(body.action==="adminRead")payload=dataset();
+  else if(body.action==="adminUpdate"){
+   assert.equal(body.appId,"recruit");
+   assert.equal(body.tab,"理財工作取捨");
+   assert.equal(body.recordId,"07-0001");
+   assert.equal(body.expectedRevision,1);
+   newText=body.fields["可能得到"];writeCount++;
+   payload={success:true,appId:"recruit",contract:"ava-admin-session-v1",
+    data:{tab:body.tab,recordId:body.recordId,recordRevision:2,
+     fields:body.fields,verifiedFields:["可能得到"],authoritative:true,
+     persisted:true,readAfterWrite:true}};
+  }else payload={ok:false,error:{code:"UNKNOWN_ACTION"}};
+  await route.fulfill({status:200,contentType:"application/json",
+   headers:{"access-control-allow-origin":"*"},body:JSON.stringify(payload)});
+ });
+ const ticket="acceptance-ticket",nonce="acceptance-nonce";
+ await page.goto("about:blank");
+ await page.evaluate(([ticket,nonce])=>{
+  window.name="ava-admin-session-v1:"+JSON.stringify({
+   type:"ava-admin-session-context",appId:"recruit",launchTicket:ticket,
+   launchNonce:nonce,browserProof:"browser-proof",expiresAt:new Date(Date.now()+60000).toISOString(),
+   contract:"ava-admin-session-v1"
+  });
+ },[ticket,nonce]);
+ await page.goto(baseUrl+"/index.html?avaEntry=admin&avaAdminLaunch="+ticket+"&avaAdminLaunchNonce="+nonce);
+ await page.getByRole("tab",{name:"理財工作取捨"}).click();
+ await page.getByRole("combobox",{name:"選擇官方紀錄"}).selectOption("07-0001");
+ await page.getByRole("textbox",{name:"可能得到"}).fill("已驗證文字更新");
+ await page.getByRole("button",{name:"確認發佈官方修改"}).click();
+ await page.getByRole("status").filter({hasText:"重新讀取核對"}).waitFor({timeout:10000});
+ assert.equal(writeCount,1);
+ assert.equal(await page.getByRole("textbox",{name:"可能得到"}).inputValue(),"已驗證文字更新");
+ assert.equal(new URL(page.url()).searchParams.has("avaAdminLaunch"),false);
+ assert.deepEqual(errors,[]);
+ await page.close();
+});
