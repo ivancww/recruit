@@ -43,7 +43,7 @@ test("canonical responsive and safe-area conventions are present",()=>{
 test("internal journey provides separate back and actual step progress",()=>{
   assert.match(app,/class="page-control"/);
   assert.match(app,/class="page-count"/);
-  assert.match(app,/steps\.indexOf\(step\)/);
+  assert.match(app,/flow\.indexOf\(step\)/);
   assert.match(app,/flow-actions--below/);
   assert.match(app,/aria-pressed=/);
   assert.match(app,/setAttribute\("aria-pressed"/);
