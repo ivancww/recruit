@@ -232,7 +232,9 @@ function recruitAdminUpdate_(body) {
       Array.isArray(fields) || !Object.keys(fields).length ||
       Object.keys(fields).some(key => allowed.indexOf(key) === -1 ||
         typeof fields[key] !== 'string' || !fields[key].trim() ||
-        fields[key].length > 800 || /[<>\u0000-\u001f]/.test(fields[key]))) {
+        fields[key].length > 800 ||
+        /[<>\u0000-\u001f]/.test(fields[key]) ||
+        /^\s*[=+@-]/.test(fields[key]))) {
     throw new Error('ADMIN_FIELDS_REJECTED');
   }
   const recordId = String(body.recordId || '');
