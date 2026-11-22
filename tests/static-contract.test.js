@@ -34,7 +34,7 @@ test("supports explicit AVA Frontstage, User and Admin entry contexts", () => {
   assert.match(index, /id="avaReturnButton"/);
   assert.match(app, /get\("avaEntry"\)/);
   assert.match(app, /\["frontend","user","admin"\]/);
-  assert.match(app, /avaEntry==="user"\) openDrawer\("settingsDrawer"\)/);
+  assert.match(app, /avaEntry==="user" && userEditor\) userEditor.start\(\)/);
   assert.match(app, /avaEntry==="admin"/);
   assert.match(app, /avaSurface=\$\{avaEntry\}/);
 });

@@ -1,0 +1,214 @@
+/*
+ * AVA Recruit Frontstage UI alignment
+ * Authority: ivancww/avaplatform/design-system/DESIGN-SYSTEM.md
+ * Canonical token source: design-system/tokens.css
+ * App-specific layout only; no package, calculation, permission or data logic.
+ */
+/* Compatibility aliases only. Canonical AVA tokens/components are loaded from
+   design-system/tokens.css and design-system/components.css before this file. */
+:root {
+  --brand:var(--ava-color-brand);
+  --navy:var(--ava-color-primary);
+  --soft:var(--ava-color-brand-soft);
+  --bg:var(--ava-color-background);
+  --surface:var(--ava-color-surface);
+  --text:var(--ava-color-text);
+  --sub:var(--ava-color-text-secondary);
+  --muted:var(--ava-color-text-muted);
+  --border:var(--ava-color-border);
+  --success:var(--ava-color-success);
+  --danger:var(--ava-color-danger);
+  --shadow:var(--ava-shadow-sm);
+  --radius:var(--ava-card-radius);
+}
+.ava-front {
+  margin:0;min-height:100vh;min-height:100dvh;
+  background:var(--ava-color-background);color:var(--ava-color-text);
+  font:400 var(--ava-type-body)/1.6 var(--ava-font-family);
+}
+.ava-front [hidden]{display:none!important}
+.ava-front *,.ava-front *::before,.ava-front *::after{box-sizing:border-box}
+.ava-front button,.ava-front input,.ava-front textarea,.ava-front select{font-family:inherit}
+.ava-front button,.ava-front a,.ava-front input,.ava-front select,.ava-front textarea{touch-action:manipulation}
+.ava-front :where(button,a,input,textarea,select,summary,[tabindex]):focus-visible{
+  outline:2px solid var(--ava-color-focus);outline-offset:2px;
+}
+.app-header.ava-header{
+  position:sticky;top:0;z-index:100;min-height:unset;height:auto;
+  padding: max(12px,env(safe-area-inset-top,0px)) max(var(--ava-page-padding-inline),env(safe-area-inset-right,0px))
+  12px max(var(--ava-page-padding-inline),env(safe-area-inset-left,0px));
+  display:flex;flex-wrap:wrap;gap:12px;background:var(--ava-color-surface);
+  border-bottom:1px solid var(--ava-color-border);
+}
+.brand{flex:1 1 195px;min-width:0;gap:12px}
+.brand-mark{flex:0 0 44px;width:44px;height:44px;border-radius:var(--ava-control-radius)}
+.brand strong{font-size:1rem;line-height:1.3;overflow-wrap:anywhere}
+.brand small{font-size:var(--ava-type-caption);line-height:1.4;color:var(--ava-color-text-muted)}
+.header-actions{flex:0 1 auto;flex-wrap:wrap;justify-content:flex-end;gap:8px;min-width:0}
+.ava-front :where(.mode-button,.icon-button,.primary-button,.secondary-button,.danger-button,.text-button,.package-select){
+  border-radius:var(--ava-control-radius);min-height:var(--ava-touch-target);
+  font-size:var(--ava-type-button);font-weight:700;line-height:1.3;
+}
+.ava-front :where(.primary-button,.secondary-button,.danger-button){padding:8px 16px}
+.ava-front .primary-button{background:var(--ava-color-primary);color:var(--ava-color-on-primary)}
+.ava-front .secondary-button,.ava-front .mode-button,.ava-front .icon-button{background:var(--ava-color-surface);color:var(--ava-color-text-secondary);border:1px solid var(--ava-color-control-border)}
+.ava-front .danger-button{background:var(--ava-color-surface);color:var(--ava-color-danger);border:1px solid var(--ava-color-danger)}
+.ava-front .icon-button{display:inline-flex;align-items:center;justify-content:center;padding:8px;width:44px}
+.ava-return{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:8px;white-space:nowrap!important;max-width:none!important;padding:8px 16px!important;min-width:130px;text-decoration:none}
+.ava-icon{width:20px;height:20px;flex-shrink:0;display:inline-block}
+.ava-front :where(.primary-button,.secondary-button,.mode-button,.icon-button,.option,.choice-card,.package-select):disabled{
+  opacity:1;background:#e2e8f0;color:var(--ava-color-text-secondary);cursor:not-allowed;border-color:var(--ava-color-border);
+}
+@media(hover:hover) and (pointer:fine){
+ .ava-front .primary-button:hover:not(:disabled){background:var(--ava-color-primary-hover)}
+ .ava-front :where(.secondary-button,.mode-button,.icon-button,.option,.choice-card):hover:not(:disabled){background:var(--ava-color-brand-soft);border-color:var(--ava-color-brand)}
+}
+.progress{position:relative;top:auto;height:3px;z-index:1;background:var(--ava-color-border)}
+.progress div{height:100%;background:var(--ava-color-brand)}
+.flow-shell.ava-container{
+  width:100%;max-width:var(--ava-content-width);margin:0 auto;
+  padding:var(--ava-page-padding-block) max(var(--ava-page-padding-inline),env(safe-area-inset-right,0px))
+    max(var(--ava-page-padding-block),env(safe-area-inset-bottom,0px))
+    max(var(--ava-page-padding-inline),env(safe-area-inset-left,0px));
+}
+.hero-card,.question-card,.ava-front :where(.story-card,.method-card,.comparison-card,.path-card,.summary-card,.package-card,.prospect-card,.ladder-step,.recap-column,.career-column,.breakdown-item,.interview-question){
+  background:var(--ava-color-surface);color:var(--ava-color-text);
+  border:1px solid var(--ava-color-border);border-radius:var(--ava-card-radius);
+  box-shadow:var(--ava-shadow-sm);min-width:0;overflow-wrap:anywhere;
+}
+.hero-card,.question-card{padding:clamp(20px,3vw,32px)}
+.hero-card{min-height:clamp(380px,64vh,640px);background:var(--ava-color-surface);align-items:flex-start}
+.hero-card h1{font-size:var(--ava-type-page);font-weight:800;line-height:1.3;letter-spacing:normal;max-width:760px}
+.hero-card p,.question-card>p{font-size:var(--ava-type-support);line-height:1.55;color:var(--ava-color-text-secondary)}
+.question-card h2{font-size:var(--ava-type-page);line-height:1.3;font-weight:800;margin:8px 0 16px}
+.ava-front :where(.story-card,.method-card,.comparison-card,.path-card,.package-card,.prospect-card,.ladder-step,.recap-column,.career-column,.breakdown-item){padding:var(--ava-card-padding)}
+.ava-front :where(.story-card,.method-card,.comparison-card,.path-card,.package-card,.prospect-card,.ladder-step,.career-column) h3{font-size:var(--ava-type-card);font-weight:700;line-height:1.3}
+.ava-front :where(.eyebrow,.step-label){font-size:var(--ava-type-caption);color:var(--ava-color-brand);font-weight:700;letter-spacing:.04em}
+.page-control{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.page-control .secondary-button{flex:0 0 auto}
+.page-count{font-size:var(--ava-type-support);color:var(--ava-color-text-muted);font-variant-numeric:tabular-nums}
+.flow-actions--below{display:flex;justify-content:flex-end;margin-top:16px;border:0;padding:0}
+.flow-actions--below .primary-button{min-width:164px}
+.ava-front :where(.option,.choice-card){min-height:var(--ava-touch-target);border-radius:var(--ava-card-radius);background:#fff;border:1px solid var(--ava-color-border);font-size:var(--ava-type-body);color:var(--ava-color-text)}
+.ava-front :where(.option.selected,.choice-card.selected){background:var(--ava-color-selected);border:2px solid var(--ava-color-brand);box-shadow:none}
+.ava-front :where(.option,.choice-card)[aria-pressed="true"]::before{content:"✓";display:inline-block;margin-right:8px;color:var(--ava-color-primary);font-weight:900}
+.ava-front :where(.option-grid,.story-grid,.method-grid,.comparison-grid,.path-grid,.summary-grid,.package-grid,.prospect-grid,.career-comparison,.reflection-frame,.discovery-recap){gap:var(--ava-gap-component)}
+.ava-front :where(.field-grid input,.field-grid select,.sim-grid input,.sim-grid select,.salary-inputs input,.drawer input,.drawer select,.drawer textarea,.interview-question textarea,.question-card>textarea,.table-wrap input){
+ width:100%;min-width:0;min-height:var(--ava-touch-target);background:#fff;color:var(--ava-color-text);
+ border:1px solid var(--ava-color-control-border);border-radius:var(--ava-control-radius);
+ font-size:var(--ava-type-body);padding:8px 12px;line-height:1.55;
+}
+.ava-front :where(.interview-question textarea,.question-card>textarea){min-height:180px;resize:vertical}
+.ava-front :where(.field-grid label,.sim-grid label,.salary-inputs label,.drawer label,.interview-label){font-size:var(--ava-type-support);font-weight:600}
+.ava-front :where(.summary-card strong,.breakdown-item strong,.package-amount){font-variant-numeric:tabular-nums;font-size:var(--ava-type-number);color:var(--ava-color-primary);overflow-wrap:anywhere}
+.ava-front .summary-card strong{line-height:1.2}
+.ava-front .table-wrap{max-width:100%;overflow-x:auto}
+.ava-front .table-wrap:focus-visible{outline:2px solid var(--ava-color-focus);outline-offset:2px}
+.ava-front :where(.callout,.disclaimer,.availability-panel){border-radius:var(--ava-control-radius)}
+.ava-front .disclaimer{color:var(--ava-color-text-secondary);background:#f6f8fb}
+.ava-front .drawer{max-width:460px;padding:24px max(20px,env(safe-area-inset-right,0px));}
+.ava-front .drawer-backdrop{background:rgba(15,23,42,.6)}
+.ava-front .session-card{border:1px solid var(--ava-color-border);border-radius:var(--ava-card-radius)}
+.ava-front .journey-phase-item{font-size:var(--ava-type-support);border-color:var(--ava-color-border);color:var(--ava-color-text-secondary);background:#fff}
+.ava-front .journey-phase-item.current{background:var(--ava-color-selected);color:var(--ava-color-primary);border-color:var(--ava-color-brand)}
+/* Compact / unfolded / tablet match the canonical 650/1000px responsive boundaries. */
+@media(max-width:650px){
+ .app-header.ava-header{align-items:center}
+ .brand{flex:1 1 100%;gap:8px}
+ .brand>div{display:block}
+ .brand small{display:block}
+ .header-actions{width:100%;justify-content:flex-start;gap:8px}
+ .ava-return{margin-right:auto}
+ .ava-front .mode-button{max-width:none!important;font-size:var(--ava-type-support)}
+ .flow-shell.ava-container{padding-top:22px}
+ .hero-card,.question-card{padding:20px}
+ .hero-card{min-height:clamp(300px,64vh,550px)}
+ .hero-actions,.flow-actions{width:100%;align-items:stretch}
+ .flow-actions--below .primary-button{width:100%;min-width:0}
+ .ava-front :where(.option-grid,.story-grid,.method-grid,.comparison-grid,.path-grid,.summary-grid,.package-grid,.prospect-grid,.career-comparison,.reflection-frame,.field-grid,.sim-grid,.salary-inputs,.two-sides,.discovery-recap,.breakdown-grid){grid-template-columns:minmax(0,1fr)}
+ .ava-front .drawer{max-width:none;width:100%;padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
+ .ava-front .journey-phase-item{font-size:11px}
+}
+@media(min-width:651px) and (max-width:1000px){
+ .ava-front :where(.option-grid,.story-grid,.method-grid,.comparison-grid,.path-grid,.summary-grid,.package-grid,.prospect-grid,.career-comparison,.reflection-frame,.discovery-recap,.breakdown-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ava-front .package-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:1001px){
+ .ava-front .package-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ .ava-front *{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* AVA Recruit on-canvas User Edit — real Frontstage, no duplicate workspace. */
+.recruit-user-edit-toolbar[hidden]{display:none!important}
+.recruit-user-edit-toolbar{
+  position:sticky;top:0;z-index:35;display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+  width:100%;padding:12px 16px;background:var(--ava-color-surface,#fff);
+  border-bottom:1px solid var(--ava-color-border,#d9e2ee);
+  box-shadow:0 3px 12px rgba(15,23,42,.07)
+}
+.recruit-user-edit-toolbar strong{font-size:14px}
+.recruit-user-edit-toolbar span{font-size:12px;color:var(--ava-color-text-secondary,#64748b);margin-right:auto}
+.recruit-user-edit-toolbar button{
+  border:1px solid var(--ava-color-border,#ccd7e2);border-radius:var(--ava-radius-md,10px);
+  min-height:var(--ava-touch-target,44px);background:var(--ava-color-surface,#fff);
+  color:var(--ava-color-text,#142034);padding:8px 12px;font:inherit;font-size:13px;cursor:pointer
+}
+.recruit-user-edit-toolbar button:disabled{opacity:.48;cursor:not-allowed}
+.recruit-user-edit-toolbar #recruitEditSave{background:var(--ava-color-primary,#1e3a8a);color:#fff}
+.recruit-inline-editable{
+  outline:2px dashed var(--ava-color-primary,#1e3a8a)!important;outline-offset:5px;
+  border-radius:4px;min-height:1.5em;cursor:text
+}
+.recruit-inline-editable:focus-visible{outline:3px solid var(--ava-color-primary,#1e3a8a)!important}
+.recruit-user-extra{margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:650px){
+ .recruit-user-edit-toolbar{position:sticky;top:0;padding:10px 12px;gap:6px}
+ .recruit-user-edit-toolbar strong,.recruit-user-edit-toolbar span{width:100%}
+ .recruit-user-edit-toolbar button{flex:1 1 auto}
+}
+
+/* App-owned AVA Studio Admin, visible only after server-backed authorization. */
+.recruit-admin-workspace{max-width:1120px;margin:24px auto;padding:16px;min-height:60vh;color:var(--ava-color-text,#142034)}
+.recruit-admin-head{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.recruit-admin-head h1{font-size:clamp(1.2rem,2vw,1.7rem);margin:0}
+.recruit-admin-head p{margin:0;font-size:13px}
+.recruit-admin-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;max-width:100%;
+ padding:12px 0;border-bottom:1px solid var(--ava-color-border,#d9e2ee)}
+.recruit-admin-tabs button{flex:0 0 auto;min-height:44px;border:1px solid var(--ava-color-border,#d9e2ee);
+ background:var(--ava-color-surface,#fff);color:inherit;border-radius:10px;padding:8px 14px;font:inherit}
+.recruit-admin-tabs button[aria-selected="true"]{background:var(--ava-color-primary,#1e3a8a);color:#fff;font-weight:600}
+.recruit-admin-content{padding:16px 0;display:flex;flex-direction:column;gap:18px}
+.recruit-admin-content label{display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:600}
+.recruit-admin-content select,.recruit-admin-record textarea,.recruit-admin-record input{
+ width:100%;max-width:100%;min-height:44px;padding:10px 12px;font:inherit;font-size:15px;
+ border:1px solid var(--ava-color-border,#d9e2ee);border-radius:10px;
+ color:var(--ava-color-text,#142034);background:var(--ava-color-surface,#fff)}
+.recruit-admin-record{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
+ background:var(--ava-color-surface,#fff);border:1px solid var(--ava-color-border,#d9e2ee);
+ border-radius:var(--ava-radius-lg,14px);padding:18px}
+.recruit-admin-record p{grid-column:1/-1;margin:0;font-size:13px}
+.recruit-admin-record [readonly]{opacity:.78;background:var(--ava-color-surface-subtle,#f6f8fc)}
+.recruit-admin-save{grid-column:1/-1;min-height:44px;padding:10px 14px;font:inherit;border:0;
+ border-radius:10px;background:var(--ava-color-primary,#1e3a8a);color:#fff;cursor:pointer}
+.recruit-admin-save:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:650px){.recruit-admin-workspace{margin:8px auto;padding:12px}
+ .recruit-admin-record{grid-template-columns:minmax(0,1fr);padding:12px}}
+
+/* App-owned update history and required newer Shell notification. */
+.recruit-release-history-button{margin-left:10px;background:transparent;color:var(--ava-color-primary,#1e3a8a);
+ border:1px solid var(--ava-color-border,#d9e2ee);border-radius:8px;padding:8px 10px;font:inherit;min-height:44px}
+.recruit-release-overlay[hidden]{display:none!important}
+.recruit-release-overlay{position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.58);
+ display:flex;align-items:center;justify-content:center;padding:16px max(16px,env(safe-area-inset-right)) 16px max(16px,env(safe-area-inset-left))}
+.recruit-release-dialog{width:min(560px,100%);max-height:calc(100dvh - 45px);
+ overflow-y:auto;background:var(--ava-color-surface,#fff);border-radius:var(--ava-radius-lg,16px);
+ padding:22px;box-shadow:0 12px 36px rgba(15,23,42,.22)}
+.recruit-release-dialog h2{font-size:clamp(1.1rem,2vw,1.45rem);margin:0 0 14px}
+.recruit-release-dialog ul{padding-left:1.4rem;margin:0 0 20px}
+.recruit-release-dialog li{margin:8px 0;font-size:14px;line-height:1.6}
+#recruitReleaseButtons{display:flex;flex-wrap:wrap;gap:10px}
+#recruitReleaseButtons button{min-height:44px;padding:10px 14px;border:1px solid var(--ava-color-border,#cbd5e1);
+ border-radius:10px;background:var(--ava-color-primary,#1e3a8a);color:#fff;font:inherit;cursor:pointer}
+#recruitReleaseButtons button:nth-child(2){background:var(--ava-color-surface,#fff);color:var(--ava-color-text,#142034)}

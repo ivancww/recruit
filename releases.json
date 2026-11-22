@@ -1,0 +1,42 @@
+{
+  "appId": "recruit",
+  "schema": "ava-independent-release-v1",
+  "currentVersion": "v2.1.3",
+  "releases": [
+    {
+      "id": "recruit-v2.1.3-20261118",
+      "version": "v2.1.3",
+      "publishedAt": "2026-11-18",
+      "published": true,
+      "title": "我的流程文字頁管理",
+      "changes": [
+        "在原有招聘流程直接新增自訂文字頁，並可刪除及調整同一位置文字頁先後次序。",
+        "個人文字頁與其他 User Edit 修改一併預覽及 Save Local，重開保留。",
+        "完整保留官方招聘方案、收入計算引擎、Google Sheet 與 AVA Studio Admin 權限邊界。"
+      ]
+    },
+    {
+      "id": "recruit-v2.1.2-20261117",
+      "version": "v2.1.2",
+      "publishedAt": "2026-11-17",
+      "published": false,
+      "title": "未發布開發候選：招聘流程與資料管理",
+      "changes": [
+        "更新 AVA 一致化招聘流程與 iPad／摺疊屏佈局。",
+        "加入原畫面「我的流程」編輯、預覽及一次過本機保存。",
+        "新增獨立招聘 Google Sheet／GAS 內容讀取；失敗時使用原有本地資料。",
+        "增加 AVA Studio 官方資料管理授權接入，未獲授權不得修改官方數據。"
+      ]
+    },
+    {
+      "id": "recruit-v2.0.0-baseline",
+      "version": "v2.0.0",
+      "publishedAt": "2026-10-01",
+      "published": false,
+      "title": "招聘系統初始版本",
+      "changes": [
+        "原有獨立招聘體驗及收入計算。"
+      ]
+    }
+  ]
+}
