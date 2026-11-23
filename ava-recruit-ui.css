@@ -212,3 +212,27 @@
 #recruitReleaseButtons button{min-height:44px;padding:10px 14px;border:1px solid var(--ava-color-border,#cbd5e1);
  border-radius:10px;background:var(--ava-color-primary,#1e3a8a);color:#fff;font:inherit;cursor:pointer}
 #recruitReleaseButtons button:nth-child(2){background:var(--ava-color-surface,#fff);color:var(--ava-color-text,#142034)}
+
+/* Mother Standard: Frontstage is presentation-only, with its return action
+   above (never inside) the main presentation card. */
+.ava-front[data-ava-mode="frontend"] :is(#settingsButton,#sessionsButton,#modeButton,#sessionDrawer,#settingsDrawer,.recruit-user-edit-toolbar){
+  display:none!important;
+}
+.recruit-global-nav{
+  display:flex;align-items:center;justify-content:flex-start;
+  width:100%;max-width:var(--ava-content-width);margin:0 auto;
+  padding:16px max(var(--ava-page-padding-inline),env(safe-area-inset-right,0px))
+    0 max(var(--ava-page-padding-inline),env(safe-area-inset-left,0px));
+}
+.recruit-global-nav .ava-return{
+  min-height:var(--ava-touch-target);min-width:0;
+  padding:8px 14px!important;border-radius:var(--ava-control-radius);
+  font-size:var(--ava-type-button);
+}
+.flow-shell.ava-container{
+  padding-top:12px;
+}
+@media(max-width:480px){
+  .recruit-global-nav{padding-top:12px}
+  .recruit-global-nav .ava-return{max-width:100%;font-size:var(--ava-type-button)}
+}

@@ -290,3 +290,61 @@ test("AVA Studio Admin browser proof opens authorized Chinese Official editor an
  assert.deepEqual(errors,[]);
  await page.close();
 });
+
+for(const viewport of [
+ {name:"phone",width:390,height:844},
+ {name:"foldable-unfolded",width:717,height:768},
+ {name:"ipad-portrait",width:768,height:1024},
+ {name:"ipad-landscape",width:1024,height:768}
+]){
+ test("Frontstage has no settings or User Edit controls; return sits above the main card: "+viewport.name,async()=>{
+  if(!browserAvailable)return test.skip("Chromium unavailable");
+  const page=await browser.newPage({viewport:{width:viewport.width,height:viewport.height}});
+  const errors=[];page.on("pageerror",error=>errors.push(error.message));
+  await page.goto(baseUrl+"/index.html?avaEntry=frontend");
+  assert.equal(await page.locator("body").getAttribute("data-ava-mode"),"frontend");
+  for(const id of ["settingsButton","sessionsButton","modeButton"]){
+   assert.equal(await page.locator("#"+id).isVisible(),false,id+" must be hidden from Frontstage");
+  }
+  assert.equal(await page.locator(".recruit-user-edit-toolbar").isVisible(),false);
+  const outside=await page.evaluate(()=>{
+   const button=document.getElementById("avaReturnButton");
+   const card=document.querySelector(".flow-page.active .hero-card");
+   const nav=button.closest(".recruit-global-nav");
+   const rect=button.getBoundingClientRect(),cardRect=card.getBoundingClientRect();
+   return {outside:!!nav&&!card.contains(button)&&!document.querySelector(".app-header").contains(button),
+     above:rect.bottom<=cardRect.top,contained:rect.left>=0&&rect.right<=innerWidth,
+     touch:rect.height>=44,overflow:document.documentElement.scrollWidth>innerWidth};
+  });
+  assert.equal(outside.outside,true);
+  assert.equal(outside.above,true);
+  assert.equal(outside.contained,true);
+  assert.equal(outside.touch,true);
+  assert.equal(outside.overflow,false);
+  await page.locator('[data-step="welcome"] [data-next]').click();
+  assert.equal(await page.locator('[data-step="ideal"].active .page-control [data-back]').count(),1);
+  const pageBack=await page.locator('[data-step="ideal"].active').evaluate(el=>{
+   const back=el.querySelector(".page-control [data-back]");
+   const card=el.querySelector(".question-card");
+   return back.getBoundingClientRect().bottom<=card.getBoundingClientRect().top;
+  });
+  assert.equal(pageBack,true);
+  await page.locator('[data-step="ideal"].active [data-back]').click();
+  assert.equal(await page.locator('[data-step="welcome"].active').count(),1);
+  assert.deepEqual(errors,[]);
+  await page.close();
+ });
+}
+test("User entry retains same Frontstage with in-place editor while Admin entry stays isolated",async()=>{
+ if(!browserAvailable)return test.skip("Chromium unavailable");
+ const page=await browser.newPage({viewport:{width:768,height:1024}});
+ await page.goto(baseUrl+"/index.html?avaEntry=user");
+ assert.equal(await page.locator("body").getAttribute("data-ava-mode"),"user");
+ assert.equal(await page.locator(".recruit-user-edit-toolbar").isVisible(),true);
+ assert.equal(await page.locator("#settingsButton").isVisible(),true);
+ assert.equal(await page.locator("#avaReturnButton").getAttribute("href"),
+   "https://ivancww.github.io/avaplatform/?avaSurface=user");
+ await page.goto(baseUrl+"/index.html?avaEntry=frontend");
+ assert.equal(await page.locator(".recruit-user-edit-toolbar").isVisible(),false);
+ await page.close();
+});
