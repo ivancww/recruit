@@ -8,7 +8,7 @@ const app=load("app.js");
 const css=load("ava-recruit-ui.css");
 const legacy=load("styles.css");
 test("independent customer-facing shell uses AVA frontstage semantics and visible return",()=>{
-  assert.match(html,/<body class="ava-front" data-ava-mode="use">/);
+  assert.match(html,/<body class="ava-front" data-ava-mode="frontend">/);
   assert.match(html,/class="app-header ava-header"/);
   assert.match(html,/id="avaReturnButton"[^>]+href="https:\/\/ivancww\.github\.io\/avaplatform\/"/);
   assert.match(html,/返回 AVA/);
