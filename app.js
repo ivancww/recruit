@@ -1,6 +1,14 @@
 (function () {
   "use strict";
   const C = window.RECRUIT_CONTENT, E = window.RecruitEngine;
+  const avaEntry=new URLSearchParams(window.location.search).get("avaEntry")||"frontend";
+  document.body.dataset.avaMode=["frontend","user","admin"].includes(avaEntry)?avaEntry:"frontend";
+  // Presentation surface shows no session management or User/Admin settings.
+  // These tools remain available only from their separate, explicit contexts.
+  const isFrontstage=document.body.dataset.avaMode==="frontend";
+  for(const id of ["modeButton","sessionsButton","settingsButton"]){
+    if(isFrontstage)document.getElementById(id).hidden=true;
+  }
   let cloudCatalog = null;
   let cloudStatus = "pending";
   const KEYS = { sessions: "ava:recruit:sessions:v2", active: "ava:recruit:active-session:v2", settings: "ava:recruit:user-settings:v2", admin: "ava:recruit:admin-preview:v2" };
@@ -176,7 +184,6 @@
     });
   }
   if(activeId){const found=sessions.find(s=>s.id===activeId);if(found)state=found}render();go("welcome");
-  const avaEntry=new URLSearchParams(window.location.search).get("avaEntry");
   if(window.RecruitReleases){
     window.RecruitReleases.create({
       window,document,storage:localStorage,
