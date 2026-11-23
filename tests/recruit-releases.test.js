@@ -9,7 +9,7 @@ test('App release manifest includes immutable identity, Chinese details and visi
  assert.equal(releases.valid(data),true);
  assert.equal(data.currentVersion,'v2.1.4');
  assert.equal(data.releases.filter(x=>x.published).length,2);
- assert.equal(data.releases[0].id,'recruit-v2.1.4-20261118');
+ assert.equal(data.releases[0].id,'recruit-v2.1.4-20261123');
  assert.match(load('index.html'),/v2\.1\.4/);
  assert.match(load('recruit-content.js'),/version: "v2\.1\.4"/);
 });
