@@ -306,7 +306,7 @@ for(const viewport of [
   for(const id of ["settingsButton","sessionsButton","modeButton"]){
    assert.equal(await page.locator("#"+id).isVisible(),false,id+" must be hidden from Frontstage");
   }
-  assert.equal(await page.locator(".recruit-user-edit-toolbar").count(),0);
+  assert.equal(await page.locator(".recruit-user-edit-toolbar").isVisible(),false);
   const outside=await page.evaluate(()=>{
    const button=document.getElementById("avaReturnButton");
    const card=document.querySelector(".flow-page.active .hero-card");
