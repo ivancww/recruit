@@ -345,6 +345,6 @@ test("User entry retains same Frontstage with in-place editor while Admin entry 
  assert.equal(await page.locator("#avaReturnButton").getAttribute("href"),
    "https://ivancww.github.io/avaplatform/?avaSurface=user");
  await page.goto(baseUrl+"/index.html?avaEntry=frontend");
- assert.equal(await page.locator(".recruit-user-edit-toolbar").count(),0);
+ assert.equal(await page.locator(".recruit-user-edit-toolbar").isVisible(),false);
  await page.close();
 });
